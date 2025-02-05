@@ -38,7 +38,7 @@ export const DistanceProvider = ({ children }) => {
           travelMode: google.maps.TravelMode.DRIVING,
           unitSystem: google.maps.UnitSystem.METRIC,
         };
-        
+
         distanceService.getDistanceMatrix(request, (response, status) => {
           if (status === google.maps.DistanceMatrixStatus.OK) {
             const distanceText = response.rows[0].elements[0].distance.text;
