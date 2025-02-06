@@ -8,7 +8,7 @@ function ConnectorDetail({ connector }) {
             setConnectorImg("ac_type_1.png")
         } else if (connector.plug_name === 'Type 2') {
             setConnectorImg("ac_type_1.png")
-        } else if (connector.plug_name === 'CHAdeMo') {
+        } else if (connector.plug_name === 'CHAdeMO') {
             setConnectorImg("dc_CHAdeMo.png")
         } else if (connector.plug_name === 'CCS1') {
             setConnectorImg("dc_ccs_1.png")
