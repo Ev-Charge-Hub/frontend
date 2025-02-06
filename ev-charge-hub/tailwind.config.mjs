@@ -11,8 +11,9 @@ export default {
         sans: ["var(--font-kanit)", "system-ui", "sans-serif"],
       },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        'custom-green': '#00AB82',
+        'custom-red': '#FF6B6B',  
+        'custom-gray': '#E7F5ED',  
       },
       container: {
         center: true, 
