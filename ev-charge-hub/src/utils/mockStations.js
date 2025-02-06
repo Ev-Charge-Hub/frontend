@@ -14,20 +14,23 @@ export const mockStations = [
       {
         "connector_id": "CT0010",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.5,
         "power_output": 150,
-        "is_available": false
+        "is_available": true
       },
       {
         "connector_id": "CT0011",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.5,
         "power_output": 22,
-        "is_available": false
+        "is_available": true
       },
       {
         "connector_id": "CT0012",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 6.8,
         "power_output": 100,
         "is_available": false
@@ -43,12 +46,13 @@ export const mockStations = [
     "status": {
       "open_hours": "00:00",
       "close_hours": "23:59",
-      "is_open": false
+      "is_open": true
     },
     "connectors": [
       {
         "connector_id": "CT0020",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 7.0,
         "power_output": 100,
         "is_available": true
@@ -56,6 +60,7 @@ export const mockStations = [
       {
         "connector_id": "CT0021",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.8,
         "power_output": 22,
         "is_available": true
@@ -63,6 +68,7 @@ export const mockStations = [
       {
         "connector_id": "CT0022",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 7.2,
         "power_output": 150,
         "is_available": true
@@ -78,12 +84,13 @@ export const mockStations = [
     "status": {
       "open_hours": "06:00",
       "close_hours": "23:00",
-      "is_open": false
+      "is_open": true
     },
     "connectors": [
       {
         "connector_id": "CT0030",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 6.2,
         "power_output": 100,
         "is_available": true
@@ -91,6 +98,7 @@ export const mockStations = [
       {
         "connector_id": "CT0031",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.2,
         "power_output": 11,
         "is_available": false
@@ -98,6 +106,7 @@ export const mockStations = [
       {
         "connector_id": "CT0032",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 6.5,
         "power_output": 150,
         "is_available": true
@@ -105,6 +114,7 @@ export const mockStations = [
       {
         "connector_id": "CT0033",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.5,
         "power_output": 22,
         "is_available": true
@@ -126,6 +136,7 @@ export const mockStations = [
       {
         "connector_id": "CT0040",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.8,
         "power_output": 150,
         "is_available": true
@@ -133,6 +144,7 @@ export const mockStations = [
       {
         "connector_id": "CT0041",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.6,
         "power_output": 22,
         "is_available": true
@@ -154,6 +166,7 @@ export const mockStations = [
       {
         "connector_id": "CT0050",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 6.4,
         "power_output": 100,
         "is_available": true
@@ -161,6 +174,7 @@ export const mockStations = [
       {
         "connector_id": "CT0051",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.3,
         "power_output": 22,
         "is_available": true
@@ -168,6 +182,7 @@ export const mockStations = [
       {
         "connector_id": "CT0052",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 6.9,
         "power_output": 150,
         "is_available": false
@@ -189,6 +204,7 @@ export const mockStations = [
       {
         "connector_id": "CT0060",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.7,
         "power_output": 150,
         "is_available": true
@@ -196,6 +212,7 @@ export const mockStations = [
       {
         "connector_id": "CT0061",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.4,
         "power_output": 22,
         "is_available": true
@@ -203,6 +220,7 @@ export const mockStations = [
       {
         "connector_id": "CT0062",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 7.0,
         "power_output": 100,
         "is_available": false
@@ -224,6 +242,7 @@ export const mockStations = [
       {
         "connector_id": "CT0070",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 7.1,
         "power_output": 100,
         "is_available": true
@@ -231,6 +250,7 @@ export const mockStations = [
       {
         "connector_id": "CT0071",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.7,
         "power_output": 22,
         "is_available": true
@@ -252,6 +272,7 @@ export const mockStations = [
       {
         "connector_id": "CT0080",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.5,
         "power_output": 150,
         "is_available": true
@@ -259,6 +280,7 @@ export const mockStations = [
       {
         "connector_id": "CT0081",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.2,
         "power_output": 11,
         "is_available": true
@@ -266,43 +288,9 @@ export const mockStations = [
       {
         "connector_id": "CT0082",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 6.8,
         "power_output": 100,
-        "is_available": true
-      }
-    ]
-  },
-  {
-    "station_id": "ST009",
-    "name": "สถานีชาร์จรถยนต์ไฟฟ้า มาร์เก็ตวิลเลจ หัวหิน",
-    "latitude": 12.570168,
-    "longitude": 99.958618,
-    "company": "SUSCO EV",
-    "status": {
-      "open_hours": "00:00",
-      "close_hours": "23:59",
-      "is_open": true
-    },
-    "connectors": [
-      {
-        "connector_id": "CT0090",
-        "type": "DC",
-        "price_per_unit": 6.3,
-        "power_output": 100,
-        "is_available": true
-      },
-      {
-        "connector_id": "CT0091",
-        "type": "AC",
-        "price_per_unit": 4.5,
-        "power_output": 22,
-        "is_available": false
-      },
-      {
-        "connector_id": "CT0092",
-        "type": "DC",
-        "price_per_unit": 6.9,
-        "power_output": 150,
         "is_available": true
       }
     ]
@@ -322,6 +310,7 @@ export const mockStations = [
       {
         "connector_id": "CT0100",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.6,
         "power_output": 150,
         "is_available": true
@@ -329,6 +318,7 @@ export const mockStations = [
       {
         "connector_id": "CT0101",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.3,
         "power_output": 22,
         "is_available": true
@@ -336,6 +326,7 @@ export const mockStations = [
       {
         "connector_id": "CT0102",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 7.2,
         "power_output": 100,
         "is_available": true
@@ -357,6 +348,7 @@ export const mockStations = [
       {
         "connector_id": "CT0110",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 6.4,
         "power_output": 100,
         "is_available": true
@@ -364,6 +356,7 @@ export const mockStations = [
       {
         "connector_id": "CT0111",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.6,
         "power_output": 22,
         "is_available": true
@@ -371,6 +364,7 @@ export const mockStations = [
       {
         "connector_id": "CT0112",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 7.0,
         "power_output": 150,
         "is_available": false
@@ -392,6 +386,7 @@ export const mockStations = [
       {
         "connector_id": "CT0120",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 6.8,
         "power_output": 150,
         "is_available": true
@@ -399,6 +394,7 @@ export const mockStations = [
       {
         "connector_id": "CT0121",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.4,
         "power_output": 22,
         "is_available": true
@@ -420,6 +416,7 @@ export const mockStations = [
       {
         "connector_id": "CT0130",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 6.5,
         "power_output": 100,
         "is_available": true
@@ -427,6 +424,7 @@ export const mockStations = [
       {
         "connector_id": "CT0131",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.2,
         "power_output": 22,
         "is_available": false
@@ -434,6 +432,7 @@ export const mockStations = [
       {
         "connector_id": "CT0132",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 7.1,
         "power_output": 150,
         "is_available": true
@@ -455,6 +454,7 @@ export const mockStations = [
       {
         "connector_id": "CT0140",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.7,
         "power_output": 150,
         "is_available": true
@@ -462,6 +462,7 @@ export const mockStations = [
       {
         "connector_id": "CT0141",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.5,
         "power_output": 22,
         "is_available": true
@@ -469,6 +470,7 @@ export const mockStations = [
       {
         "connector_id": "CT0142",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 7.3,
         "power_output": 100,
         "is_available": true
@@ -490,6 +492,7 @@ export const mockStations = [
       {
         "connector_id": "CT0150",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 6.2,
         "power_output": 100,
         "is_available": true
@@ -497,6 +500,7 @@ export const mockStations = [
       {
         "connector_id": "CT0151",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.3,
         "power_output": 22,
         "is_available": true
@@ -504,6 +508,7 @@ export const mockStations = [
       {
         "connector_id": "CT0152",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.9,
         "power_output": 150,
         "is_available": false
@@ -519,12 +524,13 @@ export const mockStations = [
     "status": {
       "open_hours": "00:00",
       "close_hours": "23:59",
-      "is_open": false
+      "is_open": true
     },
     "connectors": [
       {
         "connector_id": "CT0160",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 6.8,
         "power_output": 150,
         "is_available": true
@@ -532,6 +538,7 @@ export const mockStations = [
       {
         "connector_id": "CT0161",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.4,
         "power_output": 22,
         "is_available": true
@@ -539,6 +546,7 @@ export const mockStations = [
       {
         "connector_id": "CT0162",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 7.2,
         "power_output": 100,
         "is_available": false
@@ -560,6 +568,7 @@ export const mockStations = [
       {
         "connector_id": "CT0170",
         "type": "DC",
+        "plug_name": "CCS2",
         "price_per_unit": 6.5,
         "power_output": 100,
         "is_available": true
@@ -567,6 +576,7 @@ export const mockStations = [
       {
         "connector_id": "CT0171",
         "type": "AC",
+        "plug_name": "Type 1",
         "price_per_unit": 4.2,
         "power_output": 22,
         "is_available": true
@@ -588,6 +598,7 @@ export const mockStations = [
       {
         "connector_id": "CT0180",
         "type": "DC",
+        "plug_name": "CCS1",
         "price_per_unit": 6.7,
         "power_output": 150,
         "is_available": true
@@ -595,6 +606,7 @@ export const mockStations = [
       {
         "connector_id": "CT0181",
         "type": "AC",
+        "plug_name": "Type 2",
         "price_per_unit": 4.5,
         "power_output": 22,
         "is_available": true
@@ -602,6 +614,7 @@ export const mockStations = [
       {
         "connector_id": "CT0182",
         "type": "DC",
+        "plug_name": "CHAdeMO",
         "price_per_unit": 7.0,
         "power_output": 100,
         "is_available": false
