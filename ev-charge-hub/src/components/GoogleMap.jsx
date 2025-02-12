@@ -204,7 +204,7 @@ function GoogleMap() {
                 });
 
                 marker.addListener('click', () => {
-                    router.push(`/station/${station.station_id}`);
+                    router.push(`/station/${station.id}`);
                 });
 
                 return marker;
