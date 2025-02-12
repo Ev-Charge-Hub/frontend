@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 
 function LayoutProvider({ children }) {
     const pathName = usePathname();
-    const noLayoutPath = ["/admin", "/login"];
+    const noLayoutPath = ["/admin", "/login", "/register"];
     return (
         <>
             {noLayoutPath.includes(pathName) ? (
