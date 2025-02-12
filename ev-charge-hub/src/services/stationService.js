@@ -24,7 +24,7 @@ export const stationService = {
             if (!API_BASE_URL) {
                 return mockStations.at(0);
             }
-            const response = await fetch(`${API_BASE_URL}/station/${stationId}`);
+            const response = await fetch(`${API_BASE_URL}/stations/${stationId}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
