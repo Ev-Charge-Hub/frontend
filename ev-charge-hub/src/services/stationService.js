@@ -8,7 +8,7 @@ export const stationService = {
             if (!API_BASE_URL) {
                 return mockStations;
             }
-            const response = await fetch(`${API_BASE_URL}/stations`);
+            const response = await fetch(`http://localhost:8080/stations`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

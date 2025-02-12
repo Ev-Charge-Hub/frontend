@@ -228,7 +228,7 @@ function GoogleMap() {
         );
     }
 
-    return <div ref={mapRef} className="h-[91vh] w-full"></div>;
+    return <div ref={mapRef} className="h-screen w-full"></div>;
 }
 
 export default GoogleMap;

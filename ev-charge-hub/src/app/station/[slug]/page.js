@@ -72,8 +72,8 @@ function page({ params }) {
     }, [connectorId, currentBattery, targetBattery])
 
     return (
-        <div className='mx-4'>
-            <div className='flex justify-center my-5'>
+        <div className='mx-4 pt-1'>
+            <div className='flex justify-center my-5 mt-24'>
                 <Link href={'/'} className={`h-8 w-8 rounded-full px-1 content-center hover:bg-gray-100 cursor-pointer mt-2 mr-1`}>
                     <svg className='ml-1' xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#07775c"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" /></svg>
                 </Link>

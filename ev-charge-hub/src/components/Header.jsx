@@ -17,7 +17,7 @@ function Header() {
   };
 
   return (
-    <div className='bg-white px-4 py-4 drop-shadow-sm'>
+    <div className='bg-white px-4 py-3 drop-shadow-sm absolute z-10 top-4 right-4 left-4 rounded-full'>
       <div className='flex'>
         <img src="logo.png" className='w-8 h-8' />
         <input type="text" placeholder='Search' className='bg-gray-100 w-full h-8 px-7 mx-6 rounded-2xl' />
