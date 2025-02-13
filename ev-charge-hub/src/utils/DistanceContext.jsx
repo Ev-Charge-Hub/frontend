@@ -1,28 +1,22 @@
 "use client";
 import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
-import { useLocation } from './UserLocationProvider';
 
 const DistanceContext = createContext();
 
 export const DistanceProvider = ({ children }) => {
   const [distance, setDistance] = useState(null);
-  const userLocation = useLocation();
   const [googleLoaded, setGoogleLoaded] = useState(false);
 
   useEffect(() => {
-    if (typeof google !== "undefined" && google.maps) {
-      setGoogleLoaded(true);
-    } else {
-      console.error("Google Maps API is not loaded.");
-    }
+    const checkGoogleMap = setInterval(() => {
+      if (typeof google !== "undefined" && google.maps) {
+        setGoogleLoaded(true);
+      }
+    }, 500);
+    return () => clearInterval(checkGoogleMap);
   }, []);
 
-  const calculateDistance = useCallback((destination) => {
-    if (!userLocation) {
-      console.error("User location is not available.");
-      return;
-    }
-
+  const calculateDistance = useCallback((origin, destination) => {
     if (!googleLoaded) {
       console.error("Google Maps API is not fully loaded.");
       return;
@@ -33,12 +27,12 @@ export const DistanceProvider = ({ children }) => {
         const distanceService = new google.maps.DistanceMatrixService();
 
         const request = {
-          origins: [userLocation],
+          origins: [origin],
           destinations: [destination],
           travelMode: google.maps.TravelMode.DRIVING,
           unitSystem: google.maps.UnitSystem.METRIC,
         };
-        
+
         distanceService.getDistanceMatrix(request, (response, status) => {
           if (status === google.maps.DistanceMatrixStatus.OK) {
             const distanceText = response.rows[0].elements[0].distance.text;
@@ -53,7 +47,7 @@ export const DistanceProvider = ({ children }) => {
     } else {
       console.error("Google Maps API not available");
     }
-  }, [userLocation, googleLoaded]);
+  }, [origin, googleLoaded]);
 
   return (
     <DistanceContext.Provider value={{ distance, calculateDistance }}>
