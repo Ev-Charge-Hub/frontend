@@ -29,7 +29,7 @@ function page({ params }) {
                     const lng = parseFloat(data?.longitude);
                     if (!isNaN(lat) && !isNaN(lng)) {
                         console.log(userLocation, lat, lng);
-                        
+
                         calculateDistance(userLocation, { lat, lng });
                     } else {
                         console.error("Invalid latitude or longitude:", data.status);
