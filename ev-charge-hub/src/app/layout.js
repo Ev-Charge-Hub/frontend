@@ -19,13 +19,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${kanit.variable} antialiased max-w-xl mx-auto relative`}
+        className={`${kanit.variable} antialiased mx-auto relative`}
       >
         <LocationProvider>
           <DistanceProvider>
-            <LayoutProvider>
+            {/* <LayoutProvider> */}
               {children}
-            </LayoutProvider>
+            {/* </LayoutProvider> */}
           </DistanceProvider>
         </LocationProvider>
       </body>
