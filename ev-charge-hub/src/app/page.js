@@ -15,11 +15,17 @@ export default function Home() {
   const handleStationSelect = (id) => {
     setStationID(id);
     setActiveFilterButton(false)
+    setActiveBookmarkButton(false); 
+  };
+
+  const handleCloseStationDetail = () => {
+    setStationID(null);
   };
 
   const handleFilterButtonClick = (state) => {
     setActiveFilterButton(state); 
     setStationID(null);
+    setActiveBookmarkButton(false); 
   };
 
   const handleBookmarkButtonClick = (state) => {
@@ -32,7 +38,7 @@ export default function Home() {
     <div>
       <Header onFilterButtonClick={handleFilterButtonClick} activeFilter={activeFilterButton} onBookmarkButtonClick={handleBookmarkButtonClick} activeBookmark={activeBookmarkButton} />
       <GoogleMap onStationSelect={handleStationSelect} />
-      {stationID !== null && <StationDetail key={stationID} stationID={stationID} />}
+      {stationID !== null && <StationDetail key={stationID} stationID={stationID} closeStationDetail={handleCloseStationDetail} />}
       {activeFilterButton && <Filter />}
     </div>
   );

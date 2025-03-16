@@ -6,8 +6,7 @@ import { useState } from 'react';
 import { stationService } from '@/services/stationService';
 import { useLocation } from '@/utils/UserLocationProvider';
 
-function StationDetail({ stationID }) {
-    console.log(stationID)
+function StationDetail({ stationID, closeStationDetail }) {
     const [station, setStation] = useState(null);
     const { distance, calculateDistance } = useDistance();
     const [isOpen24Hrs, setIsOpen24Hrs] = useState(false);
@@ -69,10 +68,12 @@ function StationDetail({ stationID }) {
 
     }, [connectorId, currentBattery, targetBattery])
 
+    const availableConnectors = station?.connectors?.filter(connector => connector.is_available).length || 0;
+
     return (
         <div className="absolute bg-white z-10 w-96 px-4 py-1 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
             <div className='flex justify-center py-2 pt-5 relative'>
-                <button className='absolute top-1 right-[-0.5rem]'>
+                <button className='absolute top-1 right-[-0.5rem]' onClick={closeStationDetail}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                 </button>
                 <div className='mx-3 align-middle'>
@@ -90,7 +91,11 @@ function StationDetail({ stationID }) {
                 </div>
             </div>
             <div className='my-3'>
-                <div className='font-semibold my-1'>Connector Type</div>
+                <div className='flex flex-row justify-between'>
+                    <div className='font-semibold my-1'>Connector Type</div>
+                    <div className='text-custom-green mt-1'>{availableConnectors} of {station?.connectors?.length} stalls available</div>
+                    
+                </div>
                 <div className='flex-1 border-t-2 border-custom-green'></div>
             </div>
             <div className='overflow-scroll max-h-72 sm:max-h-44'>
