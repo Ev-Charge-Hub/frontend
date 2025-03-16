@@ -23,9 +23,7 @@ export default function RootLayout({ children }) {
       >
         <LocationProvider>
           <DistanceProvider>
-            {/* <LayoutProvider> */}
               {children}
-            {/* </LayoutProvider> */}
           </DistanceProvider>
         </LocationProvider>
       </body>
