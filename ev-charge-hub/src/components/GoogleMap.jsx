@@ -4,9 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useLocation } from '@/utils/UserLocationProvider';
 import { useRouter } from 'next/navigation';
-import { stationService } from '@/services/stationService';
 
-function GoogleMap({ onStationSelect }) {
+function GoogleMap({ onStationSelect, stationData }) {
     const mapRef = useRef(null);
     const location = useLocation();
     const [map, setMap] = useState(null);
@@ -19,16 +18,8 @@ function GoogleMap({ onStationSelect }) {
     };
 
     useEffect(() => {
-        const fetchStations = async () => {
-            try {
-                const data = await stationService.getStations();
-                setStations(data);
-            } catch (error) {
-                setError('Failed to fetch stations');
-            }
-        };
-        fetchStations();
-    }, []);
+        setStations(stationData);
+    }, [stationData]);
 
     useEffect(() => {
         const initMap = async () => {
