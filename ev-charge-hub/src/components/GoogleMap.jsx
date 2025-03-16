@@ -18,6 +18,7 @@ function GoogleMap({ onStationSelect, stationData }) {
     };
 
     useEffect(() => {
+        map?.setZoom(10)
         setStations(stationData);
     }, [stationData]);
 
