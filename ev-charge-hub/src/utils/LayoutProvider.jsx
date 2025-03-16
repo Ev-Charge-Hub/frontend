@@ -12,7 +12,7 @@ function LayoutProvider({ children }) {
                 children
             ) : (
                 <>
-                    <Header />
+                    {/* <Header /> */}
                     <main className='container bg-yellow-100'>{children}</main>
                 </>
             )}

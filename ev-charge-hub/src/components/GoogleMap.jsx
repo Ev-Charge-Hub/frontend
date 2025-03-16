@@ -6,13 +6,17 @@ import { useLocation } from '@/utils/UserLocationProvider';
 import { useRouter } from 'next/navigation';
 import { stationService } from '@/services/stationService';
 
-function GoogleMap() {
+function GoogleMap({ onStationSelect }) {
     const mapRef = useRef(null);
     const location = useLocation();
     const [map, setMap] = useState(null);
     const [error, setError] = useState(null);
     const [stations, setStations] = useState([]);
     const router = useRouter();
+
+    const handleStationClick = (id) => {
+        onStationSelect(id);
+    };
 
     useEffect(() => {
         const fetchStations = async () => {
@@ -204,7 +208,10 @@ function GoogleMap() {
                 });
 
                 marker.addListener('click', () => {
-                    router.push(`/station/${station.id}`);
+                    handleStationClick(station.id)
+                    // Center the map on the selected station
+                    map.setCenter(marker.getPosition());
+                    map.setZoom(15);
                 });
 
                 return marker;
