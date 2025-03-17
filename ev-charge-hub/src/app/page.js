@@ -1,28 +1,45 @@
 "use client";
 
 import GoogleMap from "@/components/GoogleMap";
-import { useDistance } from "@/utils/DistanceContext";
-import { useEffect } from "react";
-import { useLocation } from "@/utils/UserLocationProvider";
+import StationDetail from "@/components/StationDetail";
+import { useState } from "react";
+import Header from "@/components/Header";
+import Filter from "@/components/Filter";
 
 export default function Home() {
-  const { distance, calculateDistance } = useDistance();
-  const userLocation = useLocation(); 
-  // lat and lon of station example
-  const destination = { lat: 13.736717, lng: 100.523186 }; 
 
-  useEffect(() => {
-    if (userLocation) {
-      // use calculateDistance from useDistance to calculate distance between station and user
-      calculateDistance(destination);
-      console.log(distance);
-    }
-  }, [userLocation, calculateDistance, destination]);
+  const [stationID, setStationID] = useState(null);
+  const [activeFilterButton, setActiveFilterButton] = useState(false);
+  const [activeBookmarkButton, setActiveBookmarkButton] = useState(false);
+
+  const handleStationSelect = (id) => {
+    setStationID(id);
+    setActiveFilterButton(false)
+    setActiveBookmarkButton(false); 
+  };
+
+  const handleCloseStationDetail = () => {
+    setStationID(null);
+  };
+
+  const handleFilterButtonClick = (state) => {
+    setActiveFilterButton(state); 
+    setStationID(null);
+    setActiveBookmarkButton(false); 
+  };
+
+  const handleBookmarkButtonClick = (state) => {
+    setActiveBookmarkButton(state); 
+    setActiveFilterButton(false);
+    setStationID(null);
+  };
 
   return (
-    <div className="h-screen">
-      {/* {distance ? <p>Distance: {distance}</p> : <p>Calculating distance...</p>} */}
-      <GoogleMap />
+    <div>
+      <Header onFilterButtonClick={handleFilterButtonClick} activeFilter={activeFilterButton} onBookmarkButtonClick={handleBookmarkButtonClick} activeBookmark={activeBookmarkButton} />
+      <GoogleMap onStationSelect={handleStationSelect} />
+      {stationID !== null && <StationDetail key={stationID} stationID={stationID} closeStationDetail={handleCloseStationDetail} />}
+      {activeFilterButton && <Filter />}
     </div>
   );
 }

@@ -22,17 +22,13 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body
-        className={`${kanit.variable} font-sans antialiased w-full max-w-xl mx-auto`}
-      >
-        <AuthProvider>
-          <LocationProvider>
-            <DistanceProvider>
-              <LayoutProvider>
-                {children}
-              </LayoutProvider>
-            </DistanceProvider>
-          </LocationProvider>
+      <body className={`${kanit.variable} antialiased mx-auto relative`}>
+      <AuthProvider>
+        <LocationProvider>
+          <DistanceProvider>
+              {children}
+          </DistanceProvider>
+        </LocationProvider>
         </AuthProvider>
       </body>
     </html>
