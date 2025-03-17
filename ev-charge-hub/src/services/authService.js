@@ -1,5 +1,4 @@
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL + "/users"; 
+const API_URL = process.env.NEXT_PUBLIC_API_URL + "/users";
 
 // Register function
 export const registerUser = async (username, email, password, role) => {
@@ -19,11 +18,12 @@ export const registerUser = async (username, email, password, role) => {
 
     // Check if the response is OK (status code 200)
     if (!response.ok) {
-      throw new Error("Failed to register user");
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to register user");
     }
 
     const data = await response.json();
-    return data; 
+    return data;
   } catch (error) {
     console.error("Error registering user:", error);
     throw error;
@@ -45,7 +45,8 @@ export const loginUser = async (username, password) => {
 
     // Check if the response is OK (status code 200)
     if (!response.ok) {
-      throw new Error("Failed to login");
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to login");
     }
 
     const data = await response.json();
@@ -54,4 +55,9 @@ export const loginUser = async (username, password) => {
     console.error("Error login:", error);
     throw error;
   }
+};
+
+export const logoutUser = () => {
+  // We'll handle token removal in the component
+  return { success: true };
 };

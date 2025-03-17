@@ -3,6 +3,7 @@ import "./globals.css";
 import LayoutProvider from "@/utils/LayoutProvider";
 import { LocationProvider } from "@/utils/UserLocationProvider";
 import { DistanceProvider } from "@/utils/DistanceContext";
+import { AuthProvider } from "@/utils/authContext";
 
 const kanit = Kanit({
   variable: "--font-kanit",
@@ -18,16 +19,21 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body
-        className={`${kanit.variable} antialiased max-w-xl mx-auto`}
+        className={`${kanit.variable} font-sans antialiased w-full max-w-xl mx-auto`}
       >
-        <LocationProvider>
-          <DistanceProvider>
-            <LayoutProvider>
-              {children}
-            </LayoutProvider>
-          </DistanceProvider>
-        </LocationProvider>
+        <AuthProvider>
+          <LocationProvider>
+            <DistanceProvider>
+              <LayoutProvider>
+                {children}
+              </LayoutProvider>
+            </DistanceProvider>
+          </LocationProvider>
+        </AuthProvider>
       </body>
     </html>
   );
