@@ -18,6 +18,7 @@ function Page() {
     }
   }, [router]);
 
+  // In your login page
   const handleLogin = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -33,6 +34,7 @@ function Page() {
       const response = await loginUser(username, password);
 
       if (response.token) {
+        // Store the JWT token
         setToken(response.token);
         router.push("/");
       } else {

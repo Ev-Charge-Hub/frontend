@@ -1,63 +1,39 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL + "/users";
+import { apiClient } from './apiService';
+import { setToken, removeToken } from '@/utils/tokenManager';
 
-// Register function
-export const registerUser = async (username, email, password, role) => {
+export const registerUser = async (username, email, password, role = "USER") => {
   try {
-    const response = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-        role,
-      }),
+    return await apiClient.post('/users/register', {
+      username,
+      email,
+      password,
+      role
     });
-
-    // Check if the response is OK (status code 200)
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to register user");
-    }
-
-    const data = await response.json();
-    return data;
   } catch (error) {
     console.error("Error registering user:", error);
     throw error;
   }
 };
 
-export const loginUser = async (username, password) => {
+export const loginUser = async (username_or_email, password) => {
   try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username_or_email: username,
-        password: password,
-      }),
+    const data = await apiClient.post('/users/login', {
+      username_or_email,
+      password
     });
 
-    // Check if the response is OK (status code 200)
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to login");
+    if (data.token) {
+      setToken(data.token);
     }
 
-    const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error login:", error);
+    console.error("Error logging in:", error);
     throw error;
   }
 };
 
 export const logoutUser = () => {
-  // We'll handle token removal in the component
+  removeToken();
   return { success: true };
 };
