@@ -1,28 +1,34 @@
 "use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
 
 const LocationContext = createContext();
 
 export function LocationProvider({ children }) {
-    const [location, setLocation] = useState(null);
+    const [location, setLocation] = useState({ lat: 13.736717, lng: 100.523186 }); // Default to Bangkok
 
     useEffect(() => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.watchPosition(
-                (position) => {
+        if (typeof window === 'undefined') return;
+
+        try {
+            if ("geolocation" in navigator) {
+                const success = (position) => {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
                     setLocation({ lat: userLat, lng: userLng });
-                },
-                (error) => {
-                    console.error("Error getting user location", error);
-                    alert("Unable to retrieve your location.");
-                },
-                { enableHighAccuracy: true }
-            );
-        } else {
-            alert("Geolocation is not supported on this device.");
+                };
+
+                const error = () => {
+                    // Just use default location, don't log error
+                    console.log("Using default location");
+                };
+
+                navigator.geolocation.getCurrentPosition(success, error, {
+                    enableHighAccuracy: true,
+                    timeout: 5000
+                });
+            }
+        } catch (e) {
+            // Silently fall back to default location
         }
     }, []);
 
