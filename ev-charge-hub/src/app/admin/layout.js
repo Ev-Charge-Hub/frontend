@@ -1,9 +1,17 @@
-import React from 'react'
+// src/app/admin/layout.js
+"use client"
+import React from 'react';
+import Header from '@/components/Header';
 
-function layout() {
+function Layout({ children }) {
   return (
-    <div>layoutAdmin</div>
-  )
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+        {children}
+      </div>
+    </div>
+  );
 }
 
-export default layout
+export default Layout;
