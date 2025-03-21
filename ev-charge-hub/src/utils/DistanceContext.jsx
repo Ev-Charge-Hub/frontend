@@ -35,7 +35,7 @@ export const DistanceProvider = ({ children }) => {
 
         distanceService.getDistanceMatrix(request, (response, status) => {
           if (status === google.maps.DistanceMatrixStatus.OK) {
-            const distanceText = response.rows[0].elements[0].distance.text;            
+            const distanceText = response.rows[0].elements[0].distance.text;
             setDistance(distanceText);
           } else {
             console.error("Error with distance matrix service:", status);
@@ -47,7 +47,7 @@ export const DistanceProvider = ({ children }) => {
     } else {
       console.error("Google Maps API not available");
     }
-  }, [origin, googleLoaded]);
+  }, [googleLoaded]); // Remove 'origin' from the dependency array
 
   return (
     <DistanceContext.Provider value={{ distance, calculateDistance }}>
