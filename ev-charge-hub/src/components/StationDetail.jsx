@@ -68,8 +68,12 @@ function StationDetail({ stationID, closeStationDetail }) {
 
     }, [connectorId, currentBattery, targetBattery])
 
-    const availableConnectors = station?.connectors?.filter(connector => connector.is_available).length || 0;
-
+    const availableConnectors = station?.connectors?.filter(connector => {
+        if (!connector.booking) return true; // If no booking, it's available
+        const endTime = new Date(connector.booking.booking_end_time);
+        return endTime <= new Date(); // If booking has ended, it's available
+    }).length || 0;
+    
     return (
         <div className="absolute bg-white z-10 w-96 px-4 py-1 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
             <div className='flex justify-center py-2 pt-5 relative'>
@@ -94,7 +98,6 @@ function StationDetail({ stationID, closeStationDetail }) {
                 <div className='flex flex-row justify-between'>
                     <div className='font-semibold my-1'>Connector Type</div>
                     <div className='text-custom-green mt-1'>{availableConnectors} of {station?.connectors?.length} stalls available</div>
-                    
                 </div>
                 <div className='flex-1 border-t-2 border-custom-green'></div>
             </div>
