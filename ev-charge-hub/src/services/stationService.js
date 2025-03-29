@@ -1,30 +1,63 @@
 import { mockStations } from '@/utils/mockStations';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+
 // Create a service object with all functions
 export const stationService = {
-  getAllStations: async () => {
-    // Return mock data directly without API call
-    return mockStations;
-  },
-
-  getStationById: async (stationId) => {
-    // Find station in mock data
-    const station = mockStations.find(s => s.id === stationId || s.station_id === stationId);
-    if (!station) {
-      throw new Error('Station not found');
+  async getStations() {
+    try {
+      if (!API_BASE_URL) {
+        return mockStations;
+      }
+      const response = await fetch(`${API_BASE_URL}/stations`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching stations:', error);
+      return mockStations;
     }
-    return station;
   },
 
-  filterStations: async (params) => {
-    // Filter mock stations based on params
-    return mockStations.filter(station => {
-      // Implement filtering logic here if needed
-      return true;
-    });
+  async getStationById(stationId) {
+    try {
+      if (!API_BASE_URL) {
+        return mockStations.at(0);
+      }
+      const response = await fetch(`${API_BASE_URL}/stations/${stationId}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching stations:', error);
+      return mockStations.at(0);
+    }
   },
 
-  // New functions for station management
+  async filterStations({ company, type, search }) {
+    try {
+      const queryParams = new URLSearchParams();
+
+      // Add query parameters conditionally if they exist
+      if (company) queryParams.append('company', company);
+      if (type) queryParams.append('type', type);
+      if (search) queryParams.append('search', search);
+
+      const queryString = queryParams.toString();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stations/filter?${queryString}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching filtered stations:', error);
+      return mockStations; // You can return mock data as a fallback
+    }
+  },
 
   addStation: async (newStation) => {
     // In a real application, this would call an API endpoint
