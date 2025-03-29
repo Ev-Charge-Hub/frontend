@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 
-function ConnectorDetail({ connector }) {
+function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModalOpen, haversineDistance }) {
     const [timeRemaining, setTimeRemaining] = useState(null);
 
     // Select the appropriate connector image based on plug_name
@@ -43,23 +43,50 @@ function ConnectorDetail({ connector }) {
     // Determine if the connector is available
     const isAvailable = !connector.booking || timeRemaining === 0;
 
+    const handleSelectedConnectorClick = () => {
+        handleSelectedConnector(connector);
+        handleBookingModalOpen(true);
+    }
+
+    const isWithin20Km = haversineDistance <= 20;
+
     return (
         <div className="grid grid-cols-2 text-center border-2 border-custom-gray rounded-lg my-2 relative">
             <div className="my-4">
                 <img className="w-11 mx-auto my-1" src={`/connector_types/${connectorImg}`} alt={connector.plug_name} />
-                
+
                 <div className="font-semibold">{`${connector.plug_name} (${connector.type})`}</div>
                 <div>{`${connector?.power_output} kW`}</div>
             </div>
             <div className="content-center">
                 {isAvailable ? (
-                    <div className="text-custom-green">Available</div>
+                    <div className="text-custom-green flex flex-row justify-center">
+                        <div className="mt-2 ">
+
+                        Available
+                        </div>
+                        <button
+                            className={`px-4 py-2 bg-custom-green text-white ml-2 rounded ${isWithin20Km ? 'hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                            onClick={() => { handleSelectedConnectorClick() }}
+                            disabled={!isWithin20Km}
+                        >
+                            Book Now
+                        </button>
+                    </div>
                 ) : (
                     <div className="text-gray-500">
                         Unavailable
                         {timeRemaining > 0 && <div>{timeRemaining} mins remaining</div>}
                     </div>
                 )}
+
+                {/* Display the error message if not within 20km */}
+                {!isWithin20Km && (
+                    <p className="text-red-500 text-sm px-1">
+                        You cannot book because you're not within 20km of the station.
+                    </p>
+                )}
+
             </div>
         </div>
     );

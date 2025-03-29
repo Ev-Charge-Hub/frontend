@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { stationService } from '@/services/stationService';
 import { useLocation } from '@/utils/UserLocationProvider';
 
-function StationDetail({ stationID, closeStationDetail }) {
+function StationDetail({ stationID, handleStationData, closeStationDetail, handleBookingModalOpen, handleSelectedConnector }) {
     const [station, setStation] = useState(null);
     const { distance, calculateDistance } = useDistance();
     const [isOpen24Hrs, setIsOpen24Hrs] = useState(false);
@@ -35,13 +35,14 @@ function StationDetail({ stationID, closeStationDetail }) {
                     console.error("Latitude or longitude is missing:", data);
                 }
                 setStation(data);
+                handleStationData(data);
                 setConnectorType(data?.connectors.at(0).connector_id)
             } catch (error) {
                 setError('Failed to fetch stations');
             }
         };
         fetchStationDetail();
-    }, []);
+    }, [stationID]);
 
     const [currentBattery, setCurrentBattery] = useState(0);
     const [targetBattery, setTargetBattery] = useState(100);
@@ -73,9 +74,60 @@ function StationDetail({ stationID, closeStationDetail }) {
         const endTime = new Date(connector.booking.booking_end_time);
         return endTime <= new Date(); // If booking has ended, it's available
     }).length || 0;
-    
+
+    const [haversineDistance, setHaversineDistance] = useState(null);
+
+    function haversine(lat1, lon1, lat2, lon2) {
+        if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+            console.error('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
+            return 0; // Default to 0 if any of the coordinates are invalid
+        }
+
+        const R = 6371; // Radius of the Earth in kilometers
+        const phi1 = lat1 * (Math.PI / 180); // Convert lat1 to radians
+        const phi2 = lat2 * (Math.PI / 180); // Convert lat2 to radians
+        const deltaPhi = (lat2 - lat1) * (Math.PI / 180); // Difference in latitudes
+        const deltaLambda = (lon2 - lon1) * (Math.PI / 180); // Difference in longitudes
+
+        const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        const distance = R * c; // Final distance in kilometers
+        return distance;
+    }
+
+    useEffect(() => {
+        if (userLocation && station) {
+            console.log(userLocation)
+            const { lat: lat1, lng: lon1 } = userLocation;
+            const { latitude: lat2, longitude: lon2 } = station;
+
+            // Log the coordinates to check if they are valid
+            console.log('User Location:', lat1, lon1);
+            console.log('Station Location:', lat2, lon2);
+
+            // Check if any coordinates are invalid or missing
+            if (!lat1 || !lon1 || !lat2 || !lon2 || isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+                console.error('Invalid coordinates:', lat1, lon1, lat2, lon2);
+                setHaversineDistance(null); // Set to null or some default value
+            } else {
+                const distance = haversine(lat1, lon1, lat2, lon2);
+                setHaversineDistance(distance);
+                console.log('Updated haversineDistance:', distance);
+            }
+        }
+    }, [userLocation, station]);
+
+    useEffect(() => {
+        if (haversineDistance !== null) {
+            console.log('Haversine Distance updated:', haversineDistance);
+        }
+    }, [haversineDistance]);
+
     return (
-        <div className="absolute bg-white z-10 w-96 px-4 py-1 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
+        <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-5/6 sm:w-4/12 sm:px-4 sm:py-2 sm:mt-4 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
             <div className='flex justify-center py-2 pt-5 relative'>
                 <button className='absolute top-1 right-[-0.5rem]' onClick={closeStationDetail}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
@@ -101,10 +153,14 @@ function StationDetail({ stationID, closeStationDetail }) {
                 </div>
                 <div className='flex-1 border-t-2 border-custom-green'></div>
             </div>
-            <div className='overflow-scroll max-h-72 sm:max-h-44'>
+            <div className='overflow-scroll max-h-72 sm:max-h-40'>
                 {station?.connectors?.map((connector) => (
-                    <ConnectorDetail key={connector.connector_id} connector={connector} />
-                ))}
+                    <ConnectorDetail key={connector.connector_id}
+                        connector={connector}
+                        handleSelectedConnector={handleSelectedConnector}
+                        handleBookingModalOpen={handleBookingModalOpen}
+                        haversineDistance={haversineDistance} />)
+                )}
             </div>
             <div className='mt-4'>
                 <div className='my-2'>

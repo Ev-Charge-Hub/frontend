@@ -129,7 +129,7 @@ function GoogleMap({ onStationSelect, stationData }) {
     }, [location, map]);
 
     useEffect(() => {
-        if (map && stations.length > 0) {
+        if (map && stations?.length > 0) {
             const markers = stations.map(station => {
 
                 // Check if any connector is available

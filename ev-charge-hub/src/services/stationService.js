@@ -36,13 +36,15 @@ export const stationService = {
     }
   },
 
-  async filterStations({ company, type, search }) {
+  async filterStations({ company, type, plug_name, status, search }) {
     try {
       const queryParams = new URLSearchParams();
 
       // Add query parameters conditionally if they exist
       if (company) queryParams.append('company', company);
       if (type) queryParams.append('type', type);
+      if (plug_name) queryParams.append('plug_name', plug_name);
+      if (status) queryParams.append('status', status);
       if (search) queryParams.append('search', search);
 
       const queryString = queryParams.toString();
@@ -142,12 +144,19 @@ export const stationService = {
     };
   },
 
-  // Additional utility methods
+  bookingStation: async (stationId, bookingData) => {
+    // Simulate booking a station
+    const stationIndex = mockStations.findIndex(s => s.id === stationId || s.station_id === stationId);
+    if (stationIndex === -1) {
+      throw new Error('Station not found');
+    }
 
-  exportStations: () => {
-    // Generate the JavaScript code for mockStations.js
-    const jsCode = `export const mockStations = ${JSON.stringify(mockStations, null, 2)};`;
-    return jsCode;
+    console.log("Booking data:", bookingData);
+
+    return {
+      success: true,
+      message: 'Booking confirmed'
+    };
   }
 };
 
