@@ -144,19 +144,32 @@ export const stationService = {
     };
   },
 
-  bookingStation: async (stationId, bookingData) => {
-    // Simulate booking a station
-    const stationIndex = mockStations.findIndex(s => s.id === stationId || s.station_id === stationId);
-    if (stationIndex === -1) {
-      throw new Error('Station not found');
+  bookingStation: async (connectorId, username, booking_end_time) => {
+    try {
+      const body = {};
+
+      // Add body parameters conditionally if they exist
+      if (connectorId) body.connectorId = connectorId;
+      if (username) body.username = username;
+      if (booking_end_time) body.booking_end_time = booking_end_time;
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stations/set-booking`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error booking station:', error);
+      return null; 
     }
-
-    console.log("Booking data:", bookingData);
-
-    return {
-      success: true,
-      message: 'Booking confirmed'
-    };
   }
 };
 

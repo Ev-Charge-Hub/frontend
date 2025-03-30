@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { stationService } from "@/services/stationService";
 
 function BookingModal({ isOpen, onClose, station, connector }) {
     const [bookingTime, setBookingTime] = useState({ hours: 0, minutes: 0 });
@@ -36,10 +37,27 @@ function BookingModal({ isOpen, onClose, station, connector }) {
         return true;
     };
 
-    const handleBookingConfirm = () => {
+    const handleBookingConfirm = async () => {
+        const now = new Date();
+
+        now.setHours(now.getHours() + bookingTime.hours);
+        now.setMinutes(now.getMinutes() + bookingTime.minutes);
+
+        const booking_end_time = now.toISOString().split(".")[0];
+
         if (validateTime()) {
-            // Process the booking time here
-            alert(`Booking Confirmed for ${bookingTime.hours} hours and ${bookingTime.minutes} minutes!`);
+            try {
+                const response = await stationService.bookingStation(connector.connector_id, username, booking_end_time);
+    
+                if (response) {
+                    alert(`Booking Confirmed for ${bookingTime.hours} hours and ${bookingTime.minutes} minutes!`);
+                } else {
+                    alert("Booking failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error confirming booking:", error);
+                alert("An error occurred while booking. Please try again.");
+            }
         }
     };
 
@@ -50,8 +68,11 @@ function BookingModal({ isOpen, onClose, station, connector }) {
             onClick={handleBackgroundClick}
         >
             <div className="bg-white p-6 rounded-lg shadow-lg w-4/12 relative z-20">
-                <h2 className="text-xl font-semibold mb-4 text-center">Confirm Your Booking</h2>
-
+                {/* <h2 className="text-xl font-semibold mb-4 text-center">Confirm Your Booking</h2> */}
+                <div className='mb-4'>
+                    <div className='text-xl font-semibold mb-1'>Confirm Your Booking</div>
+                    <div className='flex-1 border-t-2 border-custom-green'></div>
+                </div>
                 <div className="text-gray-700">
                     <p><strong>Station</strong><br/>{station?.name}</p>
                     <p><strong>Connector Type</strong><br/>{connector?.type}</p>
@@ -67,7 +88,7 @@ function BookingModal({ isOpen, onClose, station, connector }) {
                             id="hours"
                             name="hours"
                             type="number"
-                            min="0"
+                            min="1"
                             max={maxHours}
                             value={bookingTime.hours}
                             onChange={handleTimeChange}
@@ -80,7 +101,7 @@ function BookingModal({ isOpen, onClose, station, connector }) {
                             id="minutes"
                             name="minutes"
                             type="number"
-                            min="0"
+                            min="1"
                             max="59"
                             value={bookingTime.minutes}
                             onChange={handleTimeChange}

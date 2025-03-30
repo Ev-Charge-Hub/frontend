@@ -27,10 +27,10 @@ function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, acti
   };
 
   return (
-    <div className='bg-white px-6 py-3 drop-shadow-lg absolute z-10 w-full flex items-center justify-between'>
+    <div className='bg-white px-4 sm:px-6 py-3 drop-shadow-lg fixed top-0 left-0 w-full flex items-center justify-between z-10'>
       <div className='flex items-center'>
         <img src="logo.png" className='w-10 h-10 object-contain' />
-        <h1 className='text-black font-semibold text-2xl ml-4 hidden sm:block'>Ev Charge Hub</h1>
+        <h1 className='text-black font-semibold text-2xl ml-4 hidden sm:block'>EvChargeHub</h1>
       </div>
 
       {/* Centered Search Bar */}
