@@ -47,6 +47,7 @@ function BookingModal({ isOpen, onClose, station, connector }) {
 
         if (validateTime()) {
             try {
+                const username = "mjrchy2";
                 const response = await stationService.bookingStation(connector.connector_id, username, booking_end_time);
     
                 if (response) {
@@ -95,7 +96,7 @@ function BookingModal({ isOpen, onClose, station, connector }) {
                             className="px-3 py-2 border rounded-md w-16"
                             placeholder="Hours"
                         />
-                        <span className="text-sm text-gray-600">hours</span>
+                        <span className="text-sm text-gray-600 mt-2">hours</span>
 
                         <input
                             id="minutes"
@@ -108,7 +109,7 @@ function BookingModal({ isOpen, onClose, station, connector }) {
                             className="px-3 py-2 border rounded-md w-16"
                             placeholder="Minutes"
                         />
-                        <span className="text-sm text-gray-600">minutes</span>
+                        <span className="text-sm text-gray-600 mt-2">minutes</span>
                     </div>
                     {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                 </div>
@@ -125,8 +126,9 @@ function BookingModal({ isOpen, onClose, station, connector }) {
                         Cancel
                     </button>
                     <button
-                        className="px-4 py-2 bg-custom-green text-white rounded hover:bg-green-600"
+                        className={`px-4 py-2 bg-custom-green text-white rounded ${bookingTime.hours === 0 && bookingTime.minutes === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={handleBookingConfirm}
+                        disabled={bookingTime.hours === 0 && !bookingTime.minutes === 0}
                     >
                         Confirm Booking
                     </button>

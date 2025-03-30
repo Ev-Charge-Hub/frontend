@@ -41,7 +41,7 @@ function Filter({closeFilter, setStationData, setDefaultData}) {
     };
 
     return (
-        <div className="absolute bg-white z-10 h-full w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-4 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
+        <div className="absolute bg-white z-10 h-full w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
             <div className='relative py-1'>
                 <button className='absolute top-1 right-1' onClick={() => { closeFilter(); setDefaultData(); }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>

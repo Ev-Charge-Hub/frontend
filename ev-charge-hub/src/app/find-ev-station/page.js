@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Filter from "@/components/Filter";
 import { stationService } from "@/services/stationService";
 import BookingModal from "@/components/BookingModal";
+import NearByStation from "@/components/NearByStation";
 
 function findEvStation() {
   const [stationID, setStationID] = useState(null);
@@ -132,6 +133,7 @@ function findEvStation() {
         onClose={handleBookingModalClose}
         station={selectedStation}
         connector={selectedConnector} />
+        {activeFilterButton === false && stationID === null && stations.length !== 0 && <NearByStation stationData={stations} />}
     </div>
   );
 }

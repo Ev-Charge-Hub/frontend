@@ -69,10 +69,8 @@ function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, acti
           className={`rounded-md p-2 flex items-center space-x-2 ${activeBookmark ? 'bg-[#00AB82] text-white' : 'bg-white hover:bg-gray-100'}`}
           onClick={handleBookmarkButtonClick}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={activeBookmark ? '#FFFFFF' : '#00AB82'}>
-            <path d="M200-120v-640q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v640L480-240 200-120Zm80-122 200-86 200 86v-518H280v518Zm0-518h400-400Z" />
-          </svg>
-          <span>Bookmark</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={activeBookmark ? '#FFFFFF' : '#00AB82'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big-icon lucide-circle-check-big"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+          <span>My Booking</span>
         </button>
 
         {/* Auth Button */}
