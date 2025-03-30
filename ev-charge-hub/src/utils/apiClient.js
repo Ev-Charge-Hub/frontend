@@ -80,8 +80,46 @@ export const apiClient = {
       throw error;
     }
   },
+  // PUT request
+  put: async (endpoint, data) => {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`Making PUT request to: ${url}`);
+    console.log("PUT payload:", data);
 
-  // Other methods remain the same...
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify(data),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error(`Network error for PUT ${url}:`, error);
+      throw error;
+    }
+  },
+  // DELETE request
+  delete: async (endpoint) => {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`Making DELETE request to: ${url}`);
+
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        }
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error(`Network error for DELETE ${url}:`, error);
+      throw error;
+    }
+  },
 };
 
 // Export individual methods if needed

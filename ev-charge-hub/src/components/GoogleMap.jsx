@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useLocation } from '@/utils/UserLocationProvider';
 import { useRouter } from 'next/navigation';
@@ -14,9 +14,10 @@ function GoogleMap({ onStationSelect }) {
     const [stations, setStations] = useState([]);
     const router = useRouter();
 
-    const handleStationClick = (id) => {
-        onStationSelect(id);
-    };
+    const handleStationClick = useCallback((id) => {
+      console.log("Station clicked:", id);
+      onStationSelect(id);
+    }, [onStationSelect]);
 
     useEffect(() => {
         const fetchStations = async () => {
