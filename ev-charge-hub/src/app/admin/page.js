@@ -13,6 +13,7 @@ export default function Page() {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [mapKey, setMapKey] = useState(0);
   const [station, setStation] = useState({
     name: '',
     company: '',
@@ -27,6 +28,8 @@ export default function Page() {
     numStalls: 1,
     connectors: []
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingStationId, setEditingStationId] = useState(null);
 
   // Add debug info
   useEffect(() => {
@@ -138,9 +141,37 @@ export default function Page() {
   };
 
   // Required handler for station selection
-  const handleStationSelect = (id) => {
+  const handleStationSelect = async (id) => {
     console.log("Station selected:", id);
-    // You could potentially load the selected station data into the form
+    try {
+      const data = await apiClient.get(`/stations/${id}`);
+
+      setStation({
+        name: data.name,
+        company: data.company,
+        latitude: data.latitude.toString(),
+        longitude: data.longitude.toString(),
+        status: {
+          open_hours: data.status.open_hours,
+          close_hours: data.status.close_hours,
+          is_open: data.status.is_open
+        },
+        chargerType: data.chargerType || 'AC and DC',
+        numStalls: data.numStalls || data.connectors.length
+      });
+
+      setConnectors(data.connectors.map(conn => ({
+        type: conn.type,
+        power_output: conn.power_output.toString(),
+        price_per_unit: conn.price_per_unit.toString(),
+        is_available: conn.is_available
+      })));
+
+      setEditingStationId(id);
+      setIsEditing(true);
+    } catch (error) {
+      console.error("Failed to load station data:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -173,13 +204,24 @@ export default function Page() {
 
       console.log("Sending data to API:", stationData);
 
-      const newStation = await apiClient.post('/stations/create', stationData);
+      if (isEditing) {
+        const updatedStation = await apiClient.put(`/stations/${editingStationId}`, stationData);
+        console.log("Station updated:", updatedStation);
 
-      console.log("API response:", newStation);
+        setStations(stations.map(station =>
+          station.id === editingStationId ? { ...station, ...stationData } : station
+        ));
 
-      // Add the new station to our local state
-      setStations([...stations, newStation]);
+        alert("Station updated successfully!");
+        setMapKey(prev => prev + 1);
+      } else {
+        const newStation = await apiClient.post('/stations/create', stationData);
+        console.log("Station created:", newStation);
 
+        setStations([...stations, newStation]);
+        alert("Station added successfully!");
+        setMapKey(prev => prev + 1);
+      }
       // Reset form
       setStation({
         name: '',
@@ -200,12 +242,14 @@ export default function Page() {
         price_per_unit: '',
         is_available: true
       }]);
+      setIsEditing(false);
+      setEditingStationId(null);
 
-      alert("Station added successfully!");
     } catch (error) {
-      console.error("Error adding station:", error);
-      setError(`Failed to add station: ${error.message}`);
-      alert(`Failed to add station: ${error.message}`);
+      console.error("Error submitting station:", error);
+      setError(`Failed to submit station: ${error.message}`);
+      alert(`Failed to submit station: ${error.message}`);
+      setMapKey(prev => prev + 1);
     } finally {
       setLoading(false);
     }
@@ -234,7 +278,7 @@ export default function Page() {
       <div className="absolute inset-0 z-0" style={{ display: mapVisible ? 'block' : 'none' }}>
         <GoogleMap
           onStationSelect={handleStationSelect}
-          key={`map-${mapVisible}`}
+          key={`map-${mapKey}`}
         />
       </div>
 
@@ -247,7 +291,9 @@ export default function Page() {
       {/* Form container - moved higher up near the navbar */}
       <div className="absolute right-4 top-12 w-96 max-h-[85vh] overflow-y-auto bg-white rounded-lg shadow-lg z-10">
         <div className="p-3">
-          <h2 className="text-lg font-bold mb-1 text-[#00AB82]">Add EV Charge Station</h2>
+          <h2 className="text-lg font-bold mb-1 text-[#00AB82]">
+            {isEditing ? 'Edit EV Charge Station' : 'Add EV Charge Station'}
+          </h2>
           <div className="border-t-2 border-[#00AB82] mb-2"></div>
 
           <form onSubmit={handleSubmit}>
@@ -281,7 +327,7 @@ export default function Page() {
               </div>
 
               <div className="mb-2">
-                <label className="block text-gray-700 text-sm mb-1">Station's Location</label>
+                <label className="block text-gray-700 text-sm mb-1">Station&#39;s Location</label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     type="text"
@@ -435,21 +481,90 @@ export default function Page() {
                 </div>
               ))}
             </div>
-
             <div className="flex justify-end space-x-2 mb-2">
               <button
-                type="button"
-                onClick={() => router.push('/')}
-                className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+                  type="button"
+                  onClick={() => {
+                    setStation({
+                      name: '',
+                      company: '',
+                      latitude: '',
+                      longitude: '',
+                      status: {
+                        open_hours: '08:00',
+                        close_hours: '20:00',
+                        is_open: true
+                      },
+                      chargerType: 'AC and DC',
+                      numStalls: 1,
+                      connectors: []
+                    });
+                    setConnectors([{
+                      type: 'AC',
+                      power_output: '',
+                      price_per_unit: '',
+                      is_available: true
+                    }]);
+                    setIsEditing(false);
+                    setEditingStationId(null);
+                  }}
+                  className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
               >
                 Cancel
               </button>
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const confirmed = window.confirm("Are you sure you want to delete this station?");
+                    if (!confirmed) return;
+
+                    try {
+                      await apiClient.delete(`/stations/${editingStationId}`);
+                      setStations(stations.filter(station => station.id !== editingStationId));
+                      setStation({
+                        name: '',
+                        company: '',
+                        latitude: '',
+                        longitude: '',
+                        status: {
+                          open_hours: '08:00',
+                          close_hours: '20:00',
+                          is_open: true
+                        },
+                        chargerType: 'AC and DC',
+                        numStalls: 1,
+                        connectors: []
+                      });
+                      setConnectors([{
+                        type: 'AC',
+                        power_output: '',
+                        price_per_unit: '',
+                        is_available: true
+                      }]);
+                      setIsEditing(false);
+                      setEditingStationId(null);
+                      alert("Station deleted successfully!");
+                      setMapKey(prev => prev + 1);
+                    } catch (err) {
+                      console.error("Failed to delete station:", err);
+                      alert(`Failed to delete station: ${err.message}`);
+                      setMapKey(prev => prev + 1);
+                    }
+                  }}
+                  className="px-4 py-1.5 text-sm rounded-lg border border-red-400 text-red-600 hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              )}
               <button
-                type="submit"
-                disabled={loading}
-                className={`px-4 py-1.5 text-sm rounded-lg ${loading ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
+                  type="submit"
+                  disabled={loading}
+                  className={`px-4 py-1.5 text-sm rounded-lg ${loading ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
               >
-                {loading ? 'Adding...' : 'Add'}
+                {loading
+                    ? isEditing ? 'Saving...' : 'Adding...'
+                    : isEditing ? 'Save' : 'Add'}
               </button>
             </div>
           </form>
