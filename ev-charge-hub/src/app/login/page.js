@@ -3,16 +3,28 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import { setToken } from '@/utils/tokenManager';
+import { getToken, setToken } from '@/utils/tokenManager';
+import { loginUser } from '@/services/authService';
+import { useAuth } from "@/utils/authContext";
+import { useEffect } from 'react';
 
 function Page() {
+  const { isAuthenticated, username, login, logout, loading } = useAuth();
   const [formData, setFormData] = useState({
-    username_or_email: "", // Changed to match API field name
+    username_or_email: "", 
     password: ""
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (getToken()) {
+      console.log("Token found, redirecting to find-ev-station");
+      router.push('/find-ev-station');
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,52 +42,20 @@ function Page() {
       return;
     }
 
-    // Simple admin check - no API call
     if (formData.username_or_email === 'admin' && formData.password === 'admin') {
       console.log("Admin login successful, using mock token");
-      // Store a mock token
       setToken('admin_mock_token');
-      // Redirect to admin page
       router.push('/admin');
       return;
     }
 
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/users/login`;
-      console.log("Sending login request to:", url);
-
-      // Make sure to use the correct field name that matches the API
-      const requestData = {
-        username_or_email: formData.username_or_email,
-        password: formData.password
-      };
-
-      console.log("Login payload:", { ...requestData, password: "REDACTED" });
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      console.log("Login response status:", response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Login API error:", errorText);
-        throw new Error(errorText || 'Login failed');
+      const data = await loginUser(formData.username_or_email, formData.password);
+      if (data) {
+        setToken(data.token);
+        login(data)
+        router.push('/find-ev-station');
       }
-
-      const data = await response.json();
-      console.log("Login success, received data:", { ...data, token: data.token ? "REDACTED" : undefined });
-
-      // Save the token
-      setToken(data.token);
-
-      // Redirect to home
-      router.push('/');
     } catch (error) {
       console.error("Login error details:", error);
       setError(error.message || "Invalid username or password");

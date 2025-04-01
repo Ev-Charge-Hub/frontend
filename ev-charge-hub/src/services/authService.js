@@ -1,13 +1,13 @@
-import { apiClient } from './apiService';
-import { setToken, removeToken } from '@/utils/tokenManager';
+import { apiClient } from "./apiService";
+import { setToken, removeToken } from "@/utils/tokenManager";
 
 export const registerUser = async (username, email, password, role = "USER") => {
   try {
-    return await apiClient.post('/users/register', {
+    return await apiClient.post("/users/register", {
       username,
       email,
       password,
-      role
+      role,
     });
   } catch (error) {
     console.error("Error registering user:", error);
@@ -17,16 +17,18 @@ export const registerUser = async (username, email, password, role = "USER") => 
 
 export const loginUser = async (username_or_email, password) => {
   try {
-    const data = await apiClient.post('/users/login', {
+    const response = await apiClient.post("/users/login", {
       username_or_email,
-      password
+      password,
     });
+    console.log("Login response:", response);
 
-    if (data.token) {
-      setToken(data.token);
+    if (response.token.token) {
+      setToken(response.token.token);
+      return response.token.token;
     }
 
-    return data;
+    return null
   } catch (error) {
     console.error("Error logging in:", error);
     throw error;
