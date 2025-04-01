@@ -1,6 +1,5 @@
 import { Kanit } from "next/font/google";
 import "./globals.css";
-import LayoutProvider from "@/utils/LayoutProvider";
 import { LocationProvider } from "@/utils/UserLocationProvider";
 import { DistanceProvider } from "@/utils/DistanceContext";
 import { AuthProvider } from "@/utils/authContext";

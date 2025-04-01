@@ -4,9 +4,8 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useLocation } from '@/utils/UserLocationProvider';
 import { useRouter } from 'next/navigation';
-import { stationService } from '@/services/stationService';
 
-function GoogleMap({ onStationSelect }) {
+function GoogleMap({ onStationSelect, stationData }) {
     const mapRef = useRef(null);
     const location = useLocation();
     const [map, setMap] = useState(null);
@@ -20,91 +19,86 @@ function GoogleMap({ onStationSelect }) {
     }, [onStationSelect]);
 
     useEffect(() => {
-        const fetchStations = async () => {
-            try {
-                // Changed to getAllStations to match your service's export
-                const data = await stationService.getAllStations();
-                setStations(data || []); // Ensure we have an array even if null is returned
-            } catch (error) {
-                console.error('Error fetching stations:', error);
-                setStations([]); // Use empty array on error
-            }
-        };
-        fetchStations();
-    }, []);
+        map?.setZoom(10)
+        setStations(stationData);
+        console.log(stationData)
+    }, [stationData]);
 
-    // Add a delay to make sure DOM is ready
     useEffect(() => {
-        const timer = setTimeout(() => {
-            initMap();
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    const initMap = async () => {
-        // Check if API key exists
-        const apiKey = process.env.NEXT_PUBLIC_MAPS_API_KEY;
-        if (!apiKey) {
-            setError('Google Maps API key is missing');
-            console.error('Google Maps API key is not configured');
-            return;
-        }
-
-        try {
-            // Initialize loader with all required libraries
-            const loader = new Loader({
-                apiKey: apiKey,
-                version: 'weekly',
-                libraries: ['places', 'geometry', 'drawing'],
-                region: 'TH',  // Set to Thailand
-                language: 'en' // Set to English
-            });
-
-            // Log when loader starts
-            console.log('Starting Google Maps loader...');
-
-            // Wait for the loader to load
-            await loader.load();
-            console.log('Google Maps script loaded successfully');
-
-            // Import the maps library
-            const { Map } = await loader.importLibrary('maps');
-            console.log('Maps library imported successfully');
-
-            const defaultPosition = { lat: 13.736717, lng: 100.523186 };
-
-            if (!mapRef.current) {
-                setError('Map container reference is not available');
+        const initMap = async () => {
+            // Check if API key exists
+            const apiKey = process.env.NEXT_PUBLIC_MAPS_API_KEY;
+            if (!apiKey) {
+                setError('Google Maps API key is missing');
+                console.error('Google Maps API key is not configured');
                 return;
             }
 
-            // Create map instance
-            const mapInstance = new Map(mapRef.current, {
-                center: defaultPosition,
-                zoom: 15,
-                mapTypeId: "roadmap",
-                mapTypeControl: false,
-                streetViewControl: false,
-                fullscreenControl: false,
-            });
+            try {
+                // Initialize loader with all required libraries
+                const loader = new Loader({
+                    apiKey: apiKey,
+                    version: 'weekly',
+                    libraries: ['places', 'geometry', 'drawing'],
+                    region: 'TH',  // Set to Thailand
+                    language: 'en' // Set to English
+                });
 
-            console.log('Map instance created successfully');
-            setMap(mapInstance);
-            setError(null); // Clear any previous errors
+                // Log when loader starts
+                console.log('Starting Google Maps loader...');
 
-        } catch (error) {
-            const errorMessage = error.message || 'Unknown error occurred';
-            console.error('Detailed error initializing map:', {
-                message: errorMessage,
-                stack: error.stack,
-                type: error.name
-            });
-            setError(`Failed to load Google Maps: ${errorMessage}`);
-        }
-    };
+                // Wait for the loader to load
+                await loader.load();
+                console.log('Google Maps script loaded successfully');
 
-    // Rest of your code remains unchanged
+                // Import the maps library
+                const { Map } = await loader.importLibrary('maps');
+                console.log('Maps library imported successfully');
+
+                const defaultPosition = { lat: 13.736717, lng: 100.523186 };
+
+                if (!mapRef.current) {
+                    setError('Map container reference is not available');
+                    return;
+                }
+
+                // Create map instance
+                const mapInstance = new Map(mapRef.current, {
+                    center: defaultPosition,
+                    zoom: 15,
+                    mapTypeId: "roadmap",
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    fullscreenControl: false,
+                });
+
+                console.log('Map instance created successfully');
+                setMap(mapInstance);
+                setError(null); // Clear any previous errors
+
+            } catch (error) {
+                const errorMessage = error.message || 'Unknown error occurred';
+                console.error('Detailed error initializing map:', {
+                    message: errorMessage,
+                    stack: error.stack,
+                    type: error.name
+                });
+                setError(`Failed to load Google Maps: ${errorMessage}`);
+            }
+        };
+
+        initMap();
+
+        // Cleanup function
+        return () => {
+            if (map) {
+                // Clean up map instance if needed
+                setMap(null);
+            }
+        };
+    }, []);
+
+    // Add marker when location is updated
     useEffect(() => {
         if (map && location) {
             try {
@@ -136,17 +130,21 @@ function GoogleMap({ onStationSelect }) {
     }, [location, map]);
 
     useEffect(() => {
-        if (map && stations && stations.length > 0) {
+        if (map && stations?.length > 0) {
             const markers = stations.map(station => {
+
                 // Check if any connector is available
-                const hasAvailableConnector = station.connectors &&
-                    station.connectors.some(connector => connector.is_available);
+                const currentTime = new Date();
+                const hasAvailableConnector = station?.connectors?.some(connector => {
+                    if (!connector.booking) return true; 
+                    return new Date(connector.booking.booking_end_time) <= currentTime; 
+                });
 
                 // Determine marker color based on conditions
                 let markerColor = "#717171"; // Default grey for closed
                 let svgContent = "";
 
-                if (station.status && station.status.is_open) {
+                if (station.status.is_open) {
                     if (hasAvailableConnector) {
                         // Station is open and has available connectors - use green marker with lightning
                         markerColor = "#00AB82";
@@ -169,7 +167,13 @@ function GoogleMap({ onStationSelect }) {
                             <circle cx="20" cy="19" r="15" fill="white"/>
                             <circle cx="20" cy="19" r="15" fill="white"/>
                             <path d="M28.1428 17.1591V20.9091H12.87V17.1591H28.1428Z" fill="#AEAEB2"/>
+                            <ellipse cx="20.5" cy="19" rx="19.5" ry="19" fill="#FF6B6B"/>
+                            <path d="M20.2745 58.0288L2.76001 27.2538L37.8764 27.3038L20.2745 58.0288Z" fill="#FF6B6B"/>
+                            <circle cx="20" cy="19" r="15" fill="white"/>
+                            <circle cx="20" cy="19" r="15" fill="white"/>
+                            <path d="M28.1428 17.1591V20.9091H12.87V17.1591H28.1428Z" fill="#FF6B6B"/>
                             </svg>
+
                         `;
                     }
                 } else {
@@ -203,7 +207,7 @@ function GoogleMap({ onStationSelect }) {
                 });
 
                 marker.addListener('click', () => {
-                    handleStationClick(station.id);
+                    handleStationClick(station.id)
                     // Center the map on the selected station
                     map.setCenter(marker.getPosition());
                     map.setZoom(15);
@@ -216,7 +220,7 @@ function GoogleMap({ onStationSelect }) {
                 markers.forEach(marker => marker.setMap(null));
             };
         }
-    }, [map, stations, router, handleStationClick]);
+    }, [map, stations, router]);
 
     // Show error message if there's an error
     if (error) {
@@ -230,13 +234,7 @@ function GoogleMap({ onStationSelect }) {
         );
     }
 
-    return (
-        <div
-            ref={mapRef}
-            className="h-screen w-full"
-            style={{ minHeight: "500px" }}
-        ></div>
-    );
+    return <div ref={mapRef} className="h-screen w-full"></div>;
 }
 
 export default GoogleMap;
