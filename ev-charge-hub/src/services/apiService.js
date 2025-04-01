@@ -1,4 +1,3 @@
-// src/utils/apiClient.js
 import { getToken } from '../utils/tokenManager';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -13,9 +12,8 @@ const handleResponse = async (response) => {
     } catch (error) {
       // If JSON parsing fails or some other error occurs
       if (error.message && error.message.includes('API error')) {
-        throw error; // Re-throw the already created error
+        throw error; 
       } else {
-        // For any other error (like JSON parse errors), throw with status code
         throw new Error(`API error: ${response.status}`);
       }
     }
@@ -110,7 +108,7 @@ export const apiClient = {
         headers: {
           'Authorization': `Bearer ${getToken()}`
         },
-        body: formData, // Don't set Content-Type header for multipart/form-data
+        body: formData, 
       });
       return handleResponse(response);
     } catch (error) {
@@ -120,5 +118,4 @@ export const apiClient = {
   }
 };
 
-// Export individual methods if needed
 export const { get, post, put, delete: del, upload } = apiClient;

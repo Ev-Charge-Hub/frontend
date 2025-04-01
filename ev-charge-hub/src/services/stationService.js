@@ -1,4 +1,4 @@
-import { mockStations } from '@/utils/mockStations';
+import { get, post, put, del } from '@/utils/apiClient';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -7,32 +7,24 @@ export const stationService = {
   async getStations() {
     try {
       if (!API_BASE_URL) {
-        return mockStations;
+        throw new Error('API_BASE_URL is not set');
       }
-      const response = await fetch(`${API_BASE_URL}/stations`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return await response.json();
+      return await get('/stations'); 
     } catch (error) {
       console.error('Error fetching stations:', error);
-      return mockStations;
+      throw error; 
     }
   },
 
   async getStationById(stationId) {
     try {
       if (!API_BASE_URL) {
-        return mockStations.at(0);
+        throw new Error('API_BASE_URL is not set');
       }
-      const response = await fetch(`${API_BASE_URL}/stations/${stationId}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return await response.json();
+      return await get(`/stations/${stationId}`); 
     } catch (error) {
-      console.error('Error fetching stations:', error);
-      return mockStations.at(0);
+      console.error('Error fetching station by ID:', error);
+      throw error; 
     }
   },
 
@@ -48,79 +40,74 @@ export const stationService = {
       if (search) queryParams.append('search', search);
 
       const queryString = queryParams.toString();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stations/filter?${queryString}`);
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      return await response.json();
+      return await get(`/stations/filter?${queryString}`); 
     } catch (error) {
       console.error('Error fetching filtered stations:', error);
-      return mockStations; // You can return mock data as a fallback
+      throw error; 
     }
   },
 
   addStation: async (newStation) => {
-    const response = await post('/stations', newStation);
-    return {
-      success: true,
-      station: response,
-    };
+    try {
+      const response = await post('/stations', newStation); 
+      return {
+        success: true,
+        station: response,
+      };
+    } catch (error) {
+      console.error('Error adding station:', error);
+      return {
+        success: false,
+        message: 'Error adding station',
+      };
+    }
   },
 
   updateStation: async (stationId, updatedData) => {
-    const response = await put(`/stations/${stationId}`, updatedData);
-    return {
-      success: true,
-      station: response,
-    };
+    try {
+      const response = await put(`/stations/${stationId}`, updatedData); 
+      return {
+        success: true,
+        station: response,
+      };
+    } catch (error) {
+      console.error('Error updating station:', error);
+      return {
+        success: false,
+        message: 'Error updating station',
+      };
+    }
   },
 
   deleteStation: async (stationId) => {
-    await del(`/stations/${stationId}`);
-    return {
-      success: true
-    };
+    try {
+      await del(`/stations/${stationId}`); 
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.error('Error deleting station:', error);
+      return {
+        success: false,
+        message: 'Error deleting station',
+      };
+    }
   },
-}
 
-  bookingStation: async (connectorId, username, booking_end_time) => {
+  bookingStation: async (connector_id, username, booking_end_time) => {
     try {
       const body = {};
 
       // Add body parameters conditionally if they exist
-      if (connectorId) body.connectorId = connectorId;
+      if (connector_id) body.connector_id = connector_id;
       if (username) body.username = username;
       if (booking_end_time) body.booking_end_time = booking_end_time;
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stations/set-booking`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      return await response.json();
+      const response = await put('/stations/set-booking', body); 
+      return response;
     } catch (error) {
       console.error('Error booking station:', error);
       return null; 
     }
   }
 };
-
-// You can also export individual functions if needed
-// export const {
-//   getAllStations,
-//   getStationById,
-//   filterStations,
-//   addStation,
-//   updateStation,
-//   deleteStation,
-//   exportStations
-// } = stationService;
