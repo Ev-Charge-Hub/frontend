@@ -1,10 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/utils/authContext';
+import { logoutUser } from '@/services/authService';
 
-function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, activeBookmark }) {
+function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, activeBookmark, isAuthenticated }) {
 
-  const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
 
   const handleFilterButtonClick = (state) => {
@@ -19,7 +18,7 @@ function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, acti
 
   const handleAuthButtonClick = () => {
     if (isAuthenticated) {
-      logout();
+      logoutUser();
       router.push('/login');
     } else {
       router.push('/login');
@@ -69,7 +68,7 @@ function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, acti
           className={`rounded-md p-2 flex items-center space-x-2 ${activeBookmark ? 'bg-[#00AB82] text-white' : 'bg-white hover:bg-gray-100'}`}
           onClick={handleBookmarkButtonClick}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={activeBookmark ? '#FFFFFF' : '#00AB82'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big-icon lucide-circle-check-big"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={activeBookmark ? '#FFFFFF' : '#00AB82'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big-icon lucide-circle-check-big"><path d="M21.801 10A10 10 0 1 1 17 3.335" /><path d="m9 11 3 3L22 4" /></svg>
           <span>My Booking</span>
         </button>
 
@@ -81,9 +80,7 @@ function Header({ onFilterButtonClick, activeFilter, onBookmarkButtonClick, acti
         >
           {isAuthenticated ? (
             <>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#00AB82">
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={activeBookmark ? '#FFFFFF' : '#00AB82'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
               <span>Log Out</span>
             </>
           ) : (

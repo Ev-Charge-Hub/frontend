@@ -8,6 +8,7 @@ import Filter from "@/components/Filter";
 import { stationService } from "@/services/stationService";
 import BookingModal from "@/components/BookingModal";
 import NearByStation from "@/components/NearByStation";
+import { useAuth } from "@/utils/authContext";
 
 function findEvStation() {
   const [stationID, setStationID] = useState(null);
@@ -17,6 +18,9 @@ function findEvStation() {
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedConnector, setSelectedConnector] = useState(null);
   const [error, setError] = useState(null);
+  const { isAuthenticated, username, login, logout, loading } = useAuth();
+
+  console.log(username, isAuthenticated);
 
   const handleStationSelect = (id) => {
     setStationID(id);
@@ -118,6 +122,7 @@ function findEvStation() {
         activeFilter={activeFilterButton}
         onBookmarkButtonClick={handleBookmarkButtonClick}
         activeBookmark={activeBookmarkButton}
+        isAuthenticated={isAuthenticated}
       />
       {stations?.length !== 0 && <GoogleMap onStationSelect={handleStationSelect} stationData={stations} />}
 
@@ -132,7 +137,8 @@ function findEvStation() {
         isOpen={isModalOpen}
         onClose={handleBookingModalClose}
         station={selectedStation}
-        connector={selectedConnector} />
+        connector={selectedConnector}
+        username={username}/>
         {activeFilterButton === false && stationID === null && stations.length !== 0 && <NearByStation stationData={stations} />}
     </div>
   );

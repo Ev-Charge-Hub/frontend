@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { logoutUser, registerUser } from '@/services/authService';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -25,89 +26,54 @@ function Register() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
+  
     console.log("Registration attempt with data:", {
       ...formData,
       password: "REDACTED",
       confirmPassword: "REDACTED"
     });
-
-    // Form validation
+  
     if (!formData.username || !formData.email || !formData.password) {
       setError("Please fill in all required fields");
       setIsLoading(false);
       return;
     }
-
-    // Validate username length - using 3 as the minimum since that's a common requirement
+  
     if (formData.username.length < 3) {
       setError("Username must be at least 3 characters long");
       setIsLoading(false);
       return;
     }
-
+  
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
       return;
     }
-
-    // Password length validation
+  
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long");
       setIsLoading(false);
       return;
     }
-
+  
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/users/register`;
-      console.log("Sending registration request to:", url);
-
-      const requestData = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: "USER"
-      };
-
-      console.log("Request payload:", { ...requestData, password: "REDACTED" });
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-      });
-
-      console.log("Registration response status:", response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Registration API error:", errorText);
-
-        // Try to parse the error message to provide a more user-friendly message
-        if (errorText.includes("Username") && errorText.includes("min")) {
-          throw new Error("Username is too short. Please use a longer username.");
-        } else if (errorText.includes("validation")) {
-          throw new Error("Validation error: " + errorText);
-        } else {
-          throw new Error(errorText || 'Registration failed');
-        }
-      }
-
-      const data = await response.json();
-      console.log("Registration successful:", data);
-
-      // Success - redirect to login
+      const response = await registerUser(
+        formData.username,
+        formData.email,
+        formData.password,
+        "USER"
+      );
+  
+      console.log("Registration successful:", response);
       router.push('/login');
     } catch (error) {
       console.error("Registration error details:", error);
-      setError(error.message || 'Registration failed. Please try again.');
+      setError(error?.response?.data?.message || error.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };
+  };  
 
   return (
     <div className='min-h-screen flex flex-col justify-center items-center bg-white p-4'>

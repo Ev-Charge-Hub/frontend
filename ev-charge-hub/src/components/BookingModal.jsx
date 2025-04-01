@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { stationService } from "@/services/stationService";
 
-function BookingModal({ isOpen, onClose, station, connector }) {
+function BookingModal({ isOpen, onClose, station, connector, username }) {
     const [bookingTime, setBookingTime] = useState({ hours: 0, minutes: 0 });
     const [error, setError] = useState(null);
     const maxHours = 8;
@@ -47,7 +47,7 @@ function BookingModal({ isOpen, onClose, station, connector }) {
 
         if (validateTime()) {
             try {
-                const username = "mjrchy2";
+                console.log(connector)
                 const response = await stationService.bookingStation(connector.connector_id, username, booking_end_time);
     
                 if (response) {
