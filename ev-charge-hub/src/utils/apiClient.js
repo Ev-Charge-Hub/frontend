@@ -13,7 +13,7 @@ const handleResponse = async (response) => {
     // Try to get error message from response body
     try {
       const errorData = await response.json();
-      console.error("API error response body:", errorData);
+      // console.error("API error respzonse body:", errorData);
       throw new Error(errorData.message || `API error: ${response.status}`);
     } catch (error) {
       // If JSON parsing fails or some other error occurs

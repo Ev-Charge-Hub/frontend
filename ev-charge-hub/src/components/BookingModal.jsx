@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { stationService } from "@/services/stationService";
 
-function BookingModal({ isOpen, onClose, station, connector, username }) {
+function BookingModal({ isOpen, onClose, station, connector, username, handleIsBook }) {
     const [bookingTime, setBookingTime] = useState({ hours: 0, minutes: 0 });
     const [error, setError] = useState(null);
     const maxHours = 8;
@@ -39,17 +39,27 @@ function BookingModal({ isOpen, onClose, station, connector, username }) {
 
     const handleBookingConfirm = async () => {
         const now = new Date();
+        console.log("Before adjustment (Local Time):", now.toLocaleString());
+        console.log("Before adjustment (UTC):", now.toISOString());
 
-        now.setHours(now.getHours() + bookingTime.hours);
-        now.setMinutes(now.getMinutes() + bookingTime.minutes);
+        // Convert hours and minutes to milliseconds and add to current timestamp
+        const bookingEndTimestamp = now.getTime() + (bookingTime.hours * 60 + bookingTime.minutes) * 60000;
 
-        const booking_end_time = now.toISOString().split(".")[0];
+        // Create a new Date object
+        const bookingEndTime = new Date(bookingEndTimestamp);
+        console.log("After adjustment (Local Time):", bookingEndTime.toLocaleString());
+        console.log("After adjustment (UTC):", bookingEndTime.toISOString());
+
+        // Use `.toISOString()` only if the backend expects UTC
+        const booking_end_time = bookingEndTime.toISOString().split(".")[0];
+        console.log("Final booking end time (ISO):", booking_end_time);
+
 
         if (validateTime()) {
             try {
                 console.log(connector)
                 const response = await stationService.bookingStation(connector.connector_id, username, booking_end_time);
-    
+
                 if (response) {
                     alert(`Booking Confirmed for ${bookingTime.hours} hours and ${bookingTime.minutes} minutes!`);
                 } else {
@@ -60,26 +70,27 @@ function BookingModal({ isOpen, onClose, station, connector, username }) {
                 alert("An error occurred while booking. Please try again.");
             }
         }
+        onClose();
+        handleIsBook();
     };
 
     return (
-        <div 
-            id="modal-background" 
+        <div
+            id="modal-background"
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
             onClick={handleBackgroundClick}
         >
             <div className="bg-white p-6 rounded-lg shadow-lg w-4/12 relative z-20">
-                {/* <h2 className="text-xl font-semibold mb-4 text-center">Confirm Your Booking</h2> */}
                 <div className='mb-4'>
                     <div className='text-xl font-semibold mb-1'>Confirm Your Booking</div>
                     <div className='flex-1 border-t-2 border-custom-green'></div>
                 </div>
                 <div className="text-gray-700">
-                    <p><strong>Station</strong><br/>{station?.name}</p>
-                    <p><strong>Connector Type</strong><br/>{connector?.type}</p>
-                    <p><strong>Plug Name</strong><br/> {connector?.plug_name}</p>
-                    <p><strong>Power Output</strong><br/>{connector?.power_output} kW</p>
-                    <p><strong>Price per kWh</strong><br/> ฿{connector?.price_per_unit}</p>
+                    <p><strong>Station</strong><br />{station?.name}</p>
+                    <p><strong>Connector Type</strong><br />{connector?.type}</p>
+                    <p><strong>Plug Name</strong><br /> {connector?.plug_name}</p>
+                    <p><strong>Power Output</strong><br />{connector?.power_output} kW</p>
+                    <p><strong>Price per kWh</strong><br /> ฿{connector?.price_per_unit}</p>
                 </div>
 
                 <div>

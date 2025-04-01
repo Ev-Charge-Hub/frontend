@@ -1,8 +1,10 @@
-"use client";
 import React, { useEffect, useState, useMemo } from "react";
 
-function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModalOpen, haversineDistance }) {
+function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModalOpen, haversineDistance, username }) {
     const [timeRemaining, setTimeRemaining] = useState(null);
+    const bookingUsername = connector.booking?.username || null;
+    const isUserBooking = bookingUsername === username;
+    console.log("isUserBooking: ", isUserBooking);
 
     // Select the appropriate connector image based on plug_name
     const connectorImg = useMemo(() => {
@@ -40,6 +42,12 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
         }
     }, [connector.booking?.booking_end_time]);
 
+    // Re-render when isUserBooking changes
+    useEffect(() => {
+        console.log("isUserBooking changed to: ", isUserBooking);
+        // Any additional side effects or logic you want when isUserBooking changes can go here.
+    }, [isUserBooking]);
+
     // Determine if the connector is available
     const isAvailable = !connector.booking || timeRemaining === 0;
 
@@ -59,11 +67,14 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
                 <div>{`${connector?.power_output} kW`}</div>
             </div>
             <div className="content-center">
-                {isAvailable ? (
+                {isUserBooking ? (
+                    <div className="text-custom-green ml-2">
+                        Booked
+                    </div>
+                ) : isAvailable ? (
                     <div className="text-custom-green flex flex-row justify-center">
-                        <div className="mt-2 ">
-
-                        Available
+                        <div className="mt-2">
+                            Available
                         </div>
                         <button
                             className={`px-4 py-2 bg-custom-green text-white ml-2 rounded ${isWithin20Km ? 'hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
@@ -86,9 +97,8 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
                         You cannot book because you're not within 20km of the station.
                     </p>
                 )}
-
             </div>
-        </div>
+        </div >
     );
 }
 

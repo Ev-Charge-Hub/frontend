@@ -6,43 +6,44 @@ import { useState } from 'react';
 import { stationService } from '@/services/stationService';
 import { useLocation } from '@/utils/UserLocationProvider';
 
-function StationDetail({ stationID, handleStationData, closeStationDetail, handleBookingModalOpen, handleSelectedConnector }) {
+function StationDetail({ stationID, handleStationData, closeStationDetail, handleBookingModalOpen, handleSelectedConnector, username, isBook }) {
     const [station, setStation] = useState(null);
     const { distance, calculateDistance } = useDistance();
     const [isOpen24Hrs, setIsOpen24Hrs] = useState(false);
     const [connectorId, setConnectorType] = useState('');
     const userLocation = useLocation();
 
-    useEffect(() => {
-        const fetchStationDetail = async () => {
-            try {
-                const data = await stationService.getStationById(stationID);
-                const openHour = parseInt(data?.status?.open_hours.split(":")[0], 10);
-                const closeHour = parseInt(data?.status?.close_hours.split(":")[0], 10);
-                setIsOpen24Hrs(openHour === 0 && (closeHour === 23 || closeHour === 0));
+    const fetchStationDetail = async () => {
+        try {
+            const data = await stationService.getStationById(stationID);
+            const openHour = parseInt(data?.status?.open_hours.split(":")[0], 10);
+            const closeHour = parseInt(data?.status?.close_hours.split(":")[0], 10);
+            setIsOpen24Hrs(openHour === 0 && (closeHour === 23 || closeHour === 0));
 
-                if (data?.latitude && data?.longitude) {
-                    const lat = parseFloat(data?.latitude);
-                    const lng = parseFloat(data?.longitude);
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        console.log(userLocation, lat, lng);
+            if (data?.latitude && data?.longitude) {
+                const lat = parseFloat(data?.latitude);
+                const lng = parseFloat(data?.longitude);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    console.log(userLocation, lat, lng);
 
-                        calculateDistance(userLocation, { lat, lng });
-                    } else {
-                        console.error("Invalid latitude or longitude:", data.status);
-                    }
+                    calculateDistance(userLocation, { lat, lng });
                 } else {
-                    console.error("Latitude or longitude is missing:", data);
+                    console.error("Invalid latitude or longitude:", data.status);
                 }
-                setStation(data);
-                handleStationData(data);
-                setConnectorType(data?.connectors.at(0).connector_id)
-            } catch (error) {
-                setError('Failed to fetch stations');
+            } else {
+                console.error("Latitude or longitude is missing:", data);
             }
-        };
+            setStation(data);
+            handleStationData(data);
+            setConnectorType(data?.connectors.at(0).connector_id)
+        } catch (error) {
+            setError('Failed to fetch stations');
+        }
+    };
+
+    useEffect(() => {
         fetchStationDetail();
-    }, [stationID]);
+    }, [stationID, isBook]);
 
     const [currentBattery, setCurrentBattery] = useState(0);
     const [targetBattery, setTargetBattery] = useState(100);
@@ -144,10 +145,6 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
                             </div>
                             <div className='text-gray-400'>{` ${distance} away `}</div>
                     </div>
-                    {/* <div className='w-full flex justify'>
-
-                        <button className={'px-4 py-2 bg-custom-green text-white ml-2 rounded hover:bg-green-600'}>Navigate</button>
-                    </div> */}
                 </div>
             </div>
             <div className='my-3'>
@@ -163,7 +160,8 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
                         connector={connector}
                         handleSelectedConnector={handleSelectedConnector}
                         handleBookingModalOpen={handleBookingModalOpen}
-                        haversineDistance={haversineDistance} />)
+                        haversineDistance={haversineDistance}
+                        username={username} />)
                 )}
             </div>
             <div className='mt-4'>

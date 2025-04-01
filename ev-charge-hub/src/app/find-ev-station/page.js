@@ -19,8 +19,11 @@ function findEvStation() {
   const [selectedConnector, setSelectedConnector] = useState(null);
   const [error, setError] = useState(null);
   const { isAuthenticated, username, login, logout, loading } = useAuth();
+  const [isBook, setIsBook] = useState(false);
 
-  console.log(username, isAuthenticated);
+  const handleIsBook = () => {
+    setIsBook(!isBook);
+  };
 
   const handleStationSelect = (id) => {
     setStationID(id);
@@ -115,6 +118,8 @@ function findEvStation() {
     setModalOpen(false);
   }
 
+
+
   return (
     <div>
       <Header
@@ -127,7 +132,16 @@ function findEvStation() {
       {stations?.length !== 0 && <GoogleMap onStationSelect={handleStationSelect} stationData={stations} />}
 
       {stationID !== null && (
-        <StationDetail key={stationID} stationID={stationID} handleStationData={handleStationData} handleSelectedConnector={handleSelectedConnector} closeStationDetail={handleCloseStationDetail} handleBookingModalOpen={handleBookingModalOpen} handleBookingModalClose={handleBookingModalClose} />
+        <StationDetail 
+        key={stationID} 
+        stationID={stationID} 
+        handleStationData={handleStationData} 
+        handleSelectedConnector={handleSelectedConnector} 
+        closeStationDetail={handleCloseStationDetail} 
+        handleBookingModalOpen={handleBookingModalOpen} 
+        handleBookingModalClose={handleBookingModalClose}
+        username={username}
+        isBook={isBook} />
       )}
 
       {activeFilterButton && (
@@ -138,8 +152,9 @@ function findEvStation() {
         onClose={handleBookingModalClose}
         station={selectedStation}
         connector={selectedConnector}
-        username={username}/>
-        {activeFilterButton === false && stationID === null && stations.length !== 0 && <NearByStation stationData={stations} />}
+        username={username}
+        handleIsBook={handleIsBook} />
+      {activeFilterButton === false && stationID === null && stations.length !== 0 && <NearByStation stationData={stations} />}
     </div>
   );
 }
