@@ -9,11 +9,12 @@ import { stationService } from "@/services/stationService";
 import BookingModal from "@/components/BookingModal";
 import NearByStation from "@/components/NearByStation";
 import { useAuth } from "@/utils/authContext";
+import MyBooking from "@/components/MyBooking";
 
 function findEvStation() {
   const [stationID, setStationID] = useState(null);
   const [activeFilterButton, setActiveFilterButton] = useState(false);
-  const [activeBookmarkButton, setActiveBookmarkButton] = useState(false);
+  const [activeBookingButton, setActiveBookingButton] = useState(false);
   const [stations, setStations] = useState([]);
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedConnector, setSelectedConnector] = useState(null);
@@ -28,7 +29,7 @@ function findEvStation() {
   const handleStationSelect = (id) => {
     setStationID(id);
     setActiveFilterButton(false);
-    setActiveBookmarkButton(false);
+    setActiveBookingButton(false);
   };
 
   const handleStationData = (data) => {
@@ -68,13 +69,17 @@ function findEvStation() {
   const handleFilterButtonClick = (state) => {
     setActiveFilterButton(state);
     setStationID(null);
-    setActiveBookmarkButton(false);
+    setActiveBookingButton(false);
   };
 
-  const handleBookmarkButtonClick = (state) => {
-    setActiveBookmarkButton(state);
+  const handleBookingButtonClick = (state) => {
+    setActiveBookingButton(state);
     setActiveFilterButton(false);
     setStationID(null);
+  };
+
+  const handleCloseBooking = () => {
+    setActiveBookingButton(false);
   };
 
   const handleSetStationData = (data) => {
@@ -118,35 +123,39 @@ function findEvStation() {
     setModalOpen(false);
   }
 
-
-
   return (
     <div>
       <Header
         onFilterButtonClick={handleFilterButtonClick}
         activeFilter={activeFilterButton}
-        onBookmarkButtonClick={handleBookmarkButtonClick}
-        activeBookmark={activeBookmarkButton}
+        onBookingButtonClick={handleBookingButtonClick}
+        activeBooking={activeBookingButton}
         isAuthenticated={isAuthenticated}
+        setStationData={handleSetStationData}
       />
       {stations?.length !== 0 && <GoogleMap onStationSelect={handleStationSelect} stationData={stations} />}
 
       {stationID !== null && (
-        <StationDetail 
-        key={stationID} 
-        stationID={stationID} 
-        handleStationData={handleStationData} 
-        handleSelectedConnector={handleSelectedConnector} 
-        closeStationDetail={handleCloseStationDetail} 
-        handleBookingModalOpen={handleBookingModalOpen} 
-        handleBookingModalClose={handleBookingModalClose}
-        username={username}
-        isBook={isBook} />
+        <StationDetail
+          key={stationID}
+          stationID={stationID}
+          handleStationData={handleStationData}
+          handleSelectedConnector={handleSelectedConnector}
+          closeStationDetail={handleCloseStationDetail}
+          handleBookingModalOpen={handleBookingModalOpen}
+          handleBookingModalClose={handleBookingModalClose}
+          username={username}
+          isBook={isBook} />
       )}
 
       {activeFilterButton && (
         <Filter closeFilter={handleCloseFilter} setStationData={handleSetStationData} setDefaultData={fetchStations} />
       )}
+
+      {activeBookingButton && (
+        <MyBooking username={username} closeBooking={handleCloseBooking}/>
+      )}
+
       <BookingModal
         isOpen={isModalOpen}
         onClose={handleBookingModalClose}
@@ -154,7 +163,7 @@ function findEvStation() {
         connector={selectedConnector}
         username={username}
         handleIsBook={handleIsBook} />
-      {activeFilterButton === false && stationID === null && stations.length !== 0 && <NearByStation stationData={stations} />}
+      {activeFilterButton === false && activeBookingButton === false && stationID === null && stations?.length !== 0 && <NearByStation stationData={stations} />}
     </div>
   );
 }
