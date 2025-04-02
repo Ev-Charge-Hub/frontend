@@ -23,9 +23,9 @@ export const loginUser = async (username_or_email, password) => {
     });
     console.log("Login response:", response);
 
-    if (response.token.token) {
-      setToken(response.token.token);
-      return response.token.token;
+    if (response.token) {
+      setToken(response.token);
+      return response.token;
     }
 
     return null
