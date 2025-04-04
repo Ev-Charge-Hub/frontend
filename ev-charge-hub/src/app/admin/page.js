@@ -1,7 +1,6 @@
 // src/app/admin/page.js
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import GoogleMap from '@/components/GoogleMap';
 import { apiClient } from '@/utils/apiClient';
 import AdminHeader from '@/components/AdminHeader';
@@ -9,7 +8,6 @@ import { useAuth } from '@/utils/authContext';
 import { useLocation } from '@/utils/UserLocationProvider';
 
 export default function Page() {
-  const router = useRouter();
   const [mapVisible, setMapVisible] = useState(true);
   const [debugInfo, setDebugInfo] = useState({});
   const mapContainerRef = useRef(null);
@@ -19,14 +17,14 @@ export default function Page() {
   const [station, setStation] = useState({
     name: '',
     company: '',
-    latitude: '',
-    longitude: '',
+    latitude: 15.8700,
+    longitude: 100.9925,
     status: {
       open_hours: '',
       close_hours: '',
       is_open: true
     },
-    chargerType: '',
+    chargerType: 'AC only',
     numStalls: 1,
     connectors: []
   });
@@ -90,8 +88,8 @@ export default function Page() {
 
   const [connectors, setConnectors] = useState([
     {
-      type: '',
-      plug_name: '',
+      type: 'AC',
+      plug_name: 'Type 1',
       power_output: '',
       price_per_unit: '',
       is_available: true
@@ -120,6 +118,7 @@ export default function Page() {
   const handleConnectorChange = (index, e) => {
     const { name, value } = e.target;
     const updatedConnectors = [...connectors];
+    console.log(connectors)
     updatedConnectors[index] = {
       ...updatedConnectors[index],
       [name]: value
@@ -131,8 +130,8 @@ export default function Page() {
     setConnectors([
       ...connectors,
       {
-        type: '',
-        plug_name: '',
+        type: 'AC',
+        plug_name: 'Type 1',
         power_output: '',
         price_per_unit: '',
         is_available: true
@@ -238,12 +237,12 @@ export default function Page() {
           close_hours: '',
           is_open: true
         },
-        chargerType: '',
+        chargerType: 'AC only',
         numStalls: 1
       });
       setConnectors([{
-        type: '',
-        plug_name: '',
+        type: 'AC',
+        plug_name: 'Type 1',
         power_output: '',
         price_per_unit: '',
         is_available: true
@@ -277,21 +276,27 @@ export default function Page() {
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
-    const isStationValid =
-      station.name.trim() !== '' &&
-      station.latitude !== '' &&
-      station.longitude !== '' &&
-      station.numStalls > 0 &&
-      connectors.length > 0 &&
-      connectors.every(conn =>
-        conn.plug_name &&
-        conn.power_output !== '' &&
-        conn.price_per_unit !== ''
-      );
+    const validateForm = () => {
+      const requiredFieldsFilled =
+        station?.name &&
+        station?.latitude &&
+        station?.longitude &&
+        station?.status?.open_hours &&
+        station?.status?.close_hours &&
+        station?.chargerType &&
+        station?.numStalls &&
+        connectors.every(c =>
+          c.type &&
+          c.plug_name &&
+          c.power_output &&
+          c.price_per_unit
+        );
 
-    setIsFormValid(isStationValid);
+      setIsFormValid(Boolean(requiredFieldsFilled));
+    };
+
+    validateForm();
   }, [station, connectors]);
-
 
   return (
     <div className="flex h-screen w-full relative" ref={mapContainerRef}>
@@ -309,13 +314,13 @@ export default function Page() {
               close_hours: '',
               is_open: true
             },
-            chargerType: '',
+            chargerType: 'AC only',
             numStalls: 1,
             connectors: []
           });
           setConnectors([{
-            type: '',
-            plug_name: '',
+            type: 'AC',
+            plug_name: 'Type 1',
             power_output: '',
             price_per_unit: '',
             is_available: true
@@ -350,7 +355,7 @@ export default function Page() {
 
       {/* Map with explicit styling */}
       <div className="absolute inset-0 z-0" style={{ display: mapVisible ? 'block' : 'none' }}>
-        <GoogleMap onStationSelect={handleStationSelect} stationData={stations} handleGoogleMapLoad={handleGoogleMapLoad} center={station ? { lat: Number(station?.latitude), lng: Number(station?.longitude) } : null} />
+        <GoogleMap onStationSelect={handleStationSelect} stationData={stations} handleGoogleMapLoad={handleGoogleMapLoad} center={station ? { lat: Number(station?.latitude), lng: Number(station?.longitude) } : { lat: userLocation.lat, lng: userLocation.lng }} />
       </div>
 
       {error && (
@@ -455,7 +460,7 @@ export default function Page() {
                   <input
                     type="time"
                     name="status.open_hours"
-                    value={station?.status.open_hours}
+                    value={station?.status?.open_hours}
                     onChange={handleStationChange}
                     className="bg-gray-100 col-span-2 px-3 py-2 rounded-lg text-sm"
                   />
@@ -463,7 +468,7 @@ export default function Page() {
                   <input
                     type="time"
                     name="status.close_hours"
-                    value={station?.status.close_hours}
+                    value={station?.status?.close_hours}
                     onChange={handleStationChange}
                     className="bg-gray-100 col-span-2 px-3 py-2 rounded-lg text-sm"
                   />
@@ -518,8 +523,8 @@ export default function Page() {
                   <div>
                     <label className="block text-gray-700 text-sm mb-1">Plug Name</label>
                     <select
-                      name="plugName"
-                      value={station?.plug_name}
+                      name="plug_name"
+                      value={connector.plug_name}
                       onChange={(e) => handleConnectorChange(index, e)}
                       className="bg-gray-100 w-full h-9 px-3 rounded-lg text-sm appearance-none"
                     >
@@ -574,10 +579,10 @@ export default function Page() {
               ))}
             </div>
             {isFormValid === false && (
-                <div className="mb-2 text-red-600 text-sm">
-                  Please fill in all required fields correctly before submitting the form.
-                </div>
-              )}
+              <div className="mb-2 text-red-600 text-sm">
+                Please fill in all required fields correctly before submitting the form.
+              </div>
+            )}
 
             <div className="flex justify-end space-x-2 mb-2">
               <button
@@ -593,13 +598,13 @@ export default function Page() {
                       close_hours: '',
                       is_open: true
                     },
-                    chargerType: '',
+                    chargerType: 'AC only',
                     numStalls: 1,
                     connectors: []
                   });
                   setConnectors([{
-                    type: '',
-                    plug_name: '',
+                    type: 'AC',
+                    plug_name: 'Type 1',
                     power_output: '',
                     price_per_unit: '',
                     is_available: true
@@ -630,13 +635,13 @@ export default function Page() {
                           close_hours: '',
                           is_open: true
                         },
-                        chargerType: '',
+                        chargerType: 'AC only',
                         numStalls: 1,
                         connectors: []
                       });
                       setConnectors([{
-                        type: '',
-                        plug_name: '',
+                        type: 'AC',
+                        plug_name: 'Type 1',
                         power_output: '',
                         price_per_unit: '',
                         is_available: true
@@ -656,8 +661,11 @@ export default function Page() {
               )}
               <button
                 type="submit"
-                disabled={loading || isFormValid === false}
-                className={`px-4 py-1.5 text-sm rounded-lg ${loading || !isFormValid ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
+                disabled={loading || (isEditing ? !isFormValid : !isFormValid)}
+                className={`px-4 py-1.5 text-sm rounded-lg ${loading || (isEditing ? !isFormValid : !isFormValid)
+                    ? 'bg-gray-400'
+                    : 'bg-[#00AB82]'
+                  } text-white`}
               >
                 {loading
                   ? isEditing ? 'Saving...' : 'Adding...'

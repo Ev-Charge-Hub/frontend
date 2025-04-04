@@ -22,7 +22,7 @@ const HeroSection = () => {
             Find, book, and pay for EV charging stations nationwide. Seamless charging experience for every electric vehicle.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-blue-600 hover:bg-blue-500 text-white py-3 px-6 text-lg rounded-md" onClick={() => handleFindNearestStation()}>
+            <button className="bg-custom-green hover:bg-green-300 text-white py-3 px-6 text-lg rounded-md" onClick={() => handleFindNearestStation()}>
               Find Nearest Station
             </button>
           </div>

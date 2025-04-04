@@ -77,7 +77,7 @@ function BookingModal({ isOpen, onClose, station, connector, username, handleIsB
     return (
         <div
             id="modal-background"
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 flex items-center justify-center mr-10"
             onClick={handleBackgroundClick}
         >
             <div className="bg-white p-6 rounded-lg shadow-lg w-4/12 relative z-20 drop-shadow-lg">
