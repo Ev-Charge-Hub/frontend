@@ -66,7 +66,7 @@ function BookingModal({ isOpen, onClose, station, connector, username, handleIsB
                     alert("Booking failed. Please try again.");
                 }
             } catch (error) {
-                console.error("Error confirming booking:", error);
+                console.log("Error confirming booking:", error);
                 alert("An error occurred while booking. Please try again.");
             }
         }

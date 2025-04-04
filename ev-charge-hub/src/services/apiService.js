@@ -42,7 +42,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`GET request to ${endpoint} failed:`, error);
+      console.log(`GET request to ${endpoint} failed:`, error);
       throw error;
     }
   },
@@ -60,7 +60,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`POST request to ${endpoint} failed:`, error);
+      console.log(`POST request to ${endpoint} failed:`, error);
       throw error;
     }
   },
@@ -78,7 +78,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`PUT request to ${endpoint} failed:`, error);
+      console.log(`PUT request to ${endpoint} failed:`, error);
       throw error;
     }
   },
@@ -95,7 +95,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`DELETE request to ${endpoint} failed:`, error);
+      console.log(`DELETE request to ${endpoint} failed:`, error);
       throw error;
     }
   },
@@ -112,7 +112,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`Upload to ${endpoint} failed:`, error);
+      console.log(`Upload to ${endpoint} failed:`, error);
       throw error;
     }
   }

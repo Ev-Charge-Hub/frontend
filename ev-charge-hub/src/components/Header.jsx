@@ -4,7 +4,7 @@ import { logoutUser } from '@/services/authService';
 import { useState } from 'react';
 import { stationService } from '@/services/stationService';
 
-function Header({ onFilterButtonClick, activeFilter, onBookingButtonClick, activeBooking, isAuthenticated, setStationData }) {
+function Header({ onFilterButtonClick, activeFilter, onBookingButtonClick, activeBooking, isAuthenticated, setStationData, setSelectedStation }) {
 
   const router = useRouter();
 
@@ -35,6 +35,7 @@ function Header({ onFilterButtonClick, activeFilter, onBookingButtonClick, activ
     };
     const data = await stationService.filterStations(search);
     setStationData(data)
+    setSelectedStation(data[0]); 
   };
 
   return (

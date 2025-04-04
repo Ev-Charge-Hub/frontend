@@ -7,7 +7,7 @@ function NearByStations({ stationData, handleStationSelect, showStationDetail })
 
     const haversine = useCallback((lat1, lon1, lat2, lon2) => {
         if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-            console.error('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
+            console.log('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
             return Infinity;
         }
 

@@ -13,11 +13,11 @@ const handleResponse = async (response) => {
     // Try to get error message from response body
     try {
       const errorData = await response.json();
-      // console.error("API error respzonse body:", errorData);
+      // console.log("API error respzonse body:", errorData);
       throw new Error(errorData.message || `API error: ${response.status}`);
     } catch (error) {
       // If JSON parsing fails or some other error occurs
-      console.error("Error parsing error response:", error);
+      console.log("Error parsing error response:", error);
       if (error.message && error.message.includes('API error')) {
         throw error; // Re-throw the already created error
       } else {
@@ -54,7 +54,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`Network error for GET ${url}:`, error);
+      console.log(`Network error for GET ${url}:`, error);
       throw error;
     }
   },
@@ -76,7 +76,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`Network error for POST ${url}:`, error);
+      console.log(`Network error for POST ${url}:`, error);
       throw error;
     }
   },
@@ -97,7 +97,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`Network error for PUT ${url}:`, error);
+      console.log(`Network error for PUT ${url}:`, error);
       throw error;
     }
   },
@@ -116,7 +116,7 @@ export const apiClient = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error(`Network error for DELETE ${url}:`, error);
+      console.log(`Network error for DELETE ${url}:`, error);
       throw error;
     }
   },

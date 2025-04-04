@@ -28,10 +28,10 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
 
                     await calculateDistance(userLocation, { lat, lng });
                 } else {
-                    console.error("Invalid latitude or longitude:", data.status);
+                    console.log("Invalid latitude or longitude:", data.status);
                 }
             } else {
-                console.error("Latitude or longitude is missing:", data);
+                console.log("Latitude or longitude is missing:", data);
             }
             setStation(data);
             handleStationData(data);
@@ -80,7 +80,7 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
 
     function haversine(lat1, lon1, lat2, lon2) {
         if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-            console.error('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
+            console.log('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
             return 0; // Default to 0 if any of the coordinates are invalid
         }
 
@@ -111,7 +111,7 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
 
             // Check if any coordinates are invalid or missing
             if (!lat1 || !lon1 || !lat2 || !lon2 || isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-                console.error('Invalid coordinates:', lat1, lon1, lat2, lon2);
+                console.log('Invalid coordinates:', lat1, lon1, lat2, lon2);
                 setHaversineDistance(null); // Set to null or some default value
             } else {
                 const distance = haversine(lat1, lon1, lat2, lon2);

@@ -6,6 +6,7 @@ import GoogleMap from '@/components/GoogleMap';
 import { apiClient } from '@/utils/apiClient';
 import AdminHeader from '@/components/AdminHeader';
 import { useAuth } from '@/utils/authContext';
+import { useLocation } from '@/utils/UserLocationProvider';
 
 export default function Page() {
   const router = useRouter();
@@ -15,23 +16,24 @@ export default function Page() {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [mapKey, setMapKey] = useState(0);
   const [station, setStation] = useState({
     name: '',
     company: '',
     latitude: '',
     longitude: '',
     status: {
-      open_hours: '08:00',
-      close_hours: '20:00',
+      open_hours: '',
+      close_hours: '',
       is_open: true
     },
-    chargerType: 'AC and DC',
+    chargerType: '',
     numStalls: 1,
     connectors: []
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editingStationId, setEditingStationId] = useState(null);
+
+  const userLocation = useLocation();
 
   // Add debug info
   useEffect(() => {
@@ -78,7 +80,6 @@ export default function Page() {
         setError(null);
         console.log("Stations loaded:", data);
       } catch (error) {
-        console.error("Error loading stations:", error);
         setError(`Failed to load stations: ${error.message}`);
         setStations([]);
       }
@@ -89,7 +90,8 @@ export default function Page() {
 
   const [connectors, setConnectors] = useState([
     {
-      type: 'AC',
+      type: '',
+      plug_name: '',
       power_output: '',
       price_per_unit: '',
       is_available: true
@@ -129,7 +131,8 @@ export default function Page() {
     setConnectors([
       ...connectors,
       {
-        type: 'AC',
+        type: '',
+        plug_name: '',
         power_output: '',
         price_per_unit: '',
         is_available: true
@@ -159,12 +162,13 @@ export default function Page() {
           close_hours: data.status.close_hours,
           is_open: data.status.is_open
         },
-        chargerType: data.chargerType || 'AC and DC',
+        chargerType: data.chargerType || '',
         numStalls: data.numStalls || data.connectors.length
       });
 
       setConnectors(data.connectors.map(conn => ({
         type: conn.type,
+        plug_name: conn.plug_name,
         power_output: conn.power_output.toString(),
         price_per_unit: conn.price_per_unit.toString(),
         is_available: conn.is_available
@@ -173,7 +177,7 @@ export default function Page() {
       setEditingStationId(id);
       setIsEditing(true);
     } catch (error) {
-      console.error("Failed to load station data:", error);
+      console.log("Failed to load station data:", error);
     }
   };
 
@@ -198,7 +202,7 @@ export default function Page() {
         },
         connectors: connectors.map((conn) => ({
           type: conn.type,
-          plug_name: conn.type === 'AC' ? 'Type 2' : 'CCS2',
+          plug_name: conn.plug_name,
           price_per_unit: parseFloat(conn.price_per_unit),
           power_output: parseFloat(conn.power_output),
           is_available: true
@@ -216,31 +220,30 @@ export default function Page() {
         ));
 
         alert("Station updated successfully!");
-        setMapKey(prev => prev + 1);
       } else {
         const newStation = await apiClient.post('/stations/create', stationData);
         console.log("Station created:", newStation);
 
         setStations([...stations, newStation]);
         alert("Station added successfully!");
-        setMapKey(prev => prev + 1);
       }
       // Reset form
       setStation({
         name: '',
         company: '',
-        latitude: '',
-        longitude: '',
+        latitude: userLocation.lat,
+        longitude: userLocation.lng,
         status: {
-          open_hours: '08:00',
-          close_hours: '20:00',
+          open_hours: '',
+          close_hours: '',
           is_open: true
         },
-        chargerType: 'AC and DC',
+        chargerType: '',
         numStalls: 1
       });
       setConnectors([{
-        type: 'AC',
+        type: '',
+        plug_name: '',
         power_output: '',
         price_per_unit: '',
         is_available: true
@@ -249,52 +252,85 @@ export default function Page() {
       setEditingStationId(null);
 
     } catch (error) {
-      console.error("Error submitting station:", error);
+      console.log("Error submitting station:", error);
       setError(`Failed to submit station: ${error.message}`);
       alert(`Failed to submit station: ${error.message}`);
-      setMapKey(prev => prev + 1);
     } finally {
       setLoading(false);
     }
   };
 
-  const [selectedStation, setSelectedStation] = useState(null);
+  const [activeAddStationButton, setActiveAddStationButton] = useState(false);
+  const [activeEditStationButton, setActiveEditStationButton] = useState(false);
 
   const [isGoogleMapLoaded, setIsGoogleMapLoaded] = useState(false);
   const handleGoogleMapLoad = (state) => {
     setIsGoogleMapLoaded(state);
   }
 
-  const [activeAddStationButton, setActiveFilterButton] = useState(false);
-  const [activeEditStationButton, setActiveBookingButton] = useState(false);
   const { isAuthenticated, username, login, logout } = useAuth();
   const handleSetStationData = (data) => {
     console.log("Setting stations data:", data); // Log the data before setting it
     setStations(data);
   };
 
-  const handleAddStationButtonClick = (state) => {
-    setActiveFilterButton(state);
-    setStation(null);
-    setActiveBookingButton(false);
-  };
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  const handleEditStationButtonClick = (state) => {
-    setActiveBookingButton(state);
-    setActiveFilterButton(false);
-    setStation(null);
-  };
-  // setIsEditing(false);
-  // setEditingStationId(null);
+  useEffect(() => {
+    const isStationValid =
+      station.name.trim() !== '' &&
+      station.latitude !== '' &&
+      station.longitude !== '' &&
+      station.numStalls > 0 &&
+      connectors.length > 0 &&
+      connectors.every(conn =>
+        conn.plug_name &&
+        conn.power_output !== '' &&
+        conn.price_per_unit !== ''
+      );
+
+    setIsFormValid(isStationValid);
+  }, [station, connectors]);
+
+
   return (
     <div className="flex h-screen w-full relative" ref={mapContainerRef}>
       <AdminHeader
-        onAddStationButtonClick={handleAddStationButtonClick}
-        activeAddStation={activeAddStationButton}
-        onEditStationButtonClick={handleEditStationButtonClick}
-        activeEditStation={activeEditStationButton}
+        onAddStationButtonClick={(state) => {
+          setActiveAddStationButton(state);
+          setIsEditing(false);
+          setStation({
+            name: '',
+            company: '',
+            latitude: userLocation.lat,
+            longitude: userLocation.lng,
+            status: {
+              open_hours: '',
+              close_hours: '',
+              is_open: true
+            },
+            chargerType: '',
+            numStalls: 1,
+            connectors: []
+          });
+          setConnectors([{
+            type: '',
+            plug_name: '',
+            power_output: '',
+            price_per_unit: '',
+            is_available: true
+          }]);
+        }}
+        onEditStationButtonClick={(state) => {
+          setActiveEditStationButton(state);
+          setIsEditing(true);
+        }}
         isAuthenticated={isAuthenticated}
-        setStationData={handleSetStationData} />
+        setStationData={handleSetStationData}
+        activeAddStation={activeAddStationButton}
+        activeEditStation={activeEditStationButton}
+      />
+
       {/* Debug information overlay */}
       <div className="absolute top-24 left-4 z-20 bg-white p-3 rounded shadow text-xs max-w-xs">
         <h3 className="font-bold">Map Debug Info:</h3>
@@ -324,12 +360,11 @@ export default function Page() {
       )}
 
       {/* Form container - moved higher up near the navbar */}
-      <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
+      {<div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
         <div className="p-3">
           <h2 className="text-lg font-bold mb-1 text-[#00AB82]">
             {isEditing ? 'Edit EV Charge Station' : 'Add EV Charge Station'}
           </h2>
-          {/* <div className="border-t-2 border-[#00AB82] mb-2"></div> */}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-2">
@@ -480,7 +515,29 @@ export default function Page() {
                       <option value="DC">DC</option>
                     </select>
                   </div>
-
+                  <div>
+                    <label className="block text-gray-700 text-sm mb-1">Plug Name</label>
+                    <select
+                      name="plugName"
+                      value={station?.plug_name}
+                      onChange={(e) => handleConnectorChange(index, e)}
+                      className="bg-gray-100 w-full h-9 px-3 rounded-lg text-sm appearance-none"
+                    >
+                      {connector?.type === 'AC' && (
+                        <>
+                          <option value="Type 1">Type 1</option>
+                          <option value="Type 2">Type 2</option>
+                        </>
+                      )}
+                      {connector?.type === 'DC' && (
+                        <>
+                          <option value="CCS1">CCS1</option>
+                          <option value="CCS2">CCS2</option>
+                          <option value="CHAdeMO">CHAdeMO</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-gray-700 text-sm mb-1">Power</label>
@@ -516,6 +573,12 @@ export default function Page() {
                 </div>
               ))}
             </div>
+            {isFormValid === false && (
+                <div className="mb-2 text-red-600 text-sm">
+                  Please fill in all required fields correctly before submitting the form.
+                </div>
+              )}
+
             <div className="flex justify-end space-x-2 mb-2">
               <button
                 type="button"
@@ -523,29 +586,29 @@ export default function Page() {
                   setStation({
                     name: '',
                     company: '',
-                    latitude: '',
-                    longitude: '',
+                    latitude: userLocation.lat,
+                    longitude: userLocation.lng,
                     status: {
-                      open_hours: '08:00',
-                      close_hours: '20:00',
+                      open_hours: '',
+                      close_hours: '',
                       is_open: true
                     },
-                    chargerType: 'AC and DC',
+                    chargerType: '',
                     numStalls: 1,
                     connectors: []
                   });
                   setConnectors([{
-                    type: 'AC',
+                    type: '',
+                    plug_name: '',
                     power_output: '',
                     price_per_unit: '',
                     is_available: true
                   }]);
-                  setIsEditing(false);
                   setEditingStationId(null);
                 }}
                 className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
               >
-                Cancel
+                Clear
               </button>
               {isEditing && (
                 <button
@@ -563,16 +626,17 @@ export default function Page() {
                         latitude: '',
                         longitude: '',
                         status: {
-                          open_hours: '08:00',
-                          close_hours: '20:00',
+                          open_hours: '',
+                          close_hours: '',
                           is_open: true
                         },
-                        chargerType: 'AC and DC',
+                        chargerType: '',
                         numStalls: 1,
                         connectors: []
                       });
                       setConnectors([{
-                        type: 'AC',
+                        type: '',
+                        plug_name: '',
                         power_output: '',
                         price_per_unit: '',
                         is_available: true
@@ -580,11 +644,9 @@ export default function Page() {
                       setIsEditing(false);
                       setEditingStationId(null);
                       alert("Station deleted successfully!");
-                      setMapKey(prev => prev + 1);
                     } catch (err) {
-                      console.error("Failed to delete station:", err);
+                      console.log("Failed to delete station:", err);
                       alert(`Failed to delete station: ${err.message}`);
-                      setMapKey(prev => prev + 1);
                     }
                   }}
                   className="px-4 py-1.5 text-sm rounded-lg border border-red-400 text-red-600 hover:bg-red-50"
@@ -594,8 +656,8 @@ export default function Page() {
               )}
               <button
                 type="submit"
-                disabled={loading}
-                className={`px-4 py-1.5 text-sm rounded-lg ${loading ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
+                disabled={loading || isFormValid === false}
+                className={`px-4 py-1.5 text-sm rounded-lg ${loading || !isFormValid ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
               >
                 {loading
                   ? isEditing ? 'Saving...' : 'Adding...'
@@ -604,7 +666,7 @@ export default function Page() {
             </div>
           </form>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
