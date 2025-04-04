@@ -127,6 +127,17 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
         }
     }, [haversineDistance]);
 
+    // Function to open Google Maps with the station location
+    const openInGoogleMaps = () => {
+        if (station && station.latitude && station.longitude) {
+            // Format: https://www.google.com/maps/search/?api=1&query=latitude,longitude
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${station.latitude},${station.longitude}`;
+
+            // Open in a new tab
+            window.open(googleMapsUrl, '_blank');
+        }
+    };
+
     return (
         <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-2 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
             <div className='flex justify-center py-2 pt-5 relative'>
@@ -211,6 +222,17 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
                         <div>{estimatedTime.toFixed(2)} min</div>
                     </div>
                 </form>
+
+                {/* View in Maps Button */}
+                <button
+                    onClick={openInGoogleMaps}
+                    className="w-full my-3 py-2 bg-custom-green text-white rounded-lg flex items-center justify-center transition-colors hover:bg-custom-green-dark"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                    View in Google Maps
+                </button>
             </div>
         </div>
     )
