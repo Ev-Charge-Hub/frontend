@@ -45,7 +45,7 @@ function NearByStations({ stationData, handleStationSelect, showStationDetail })
 
 
     return (
-        <div className="absolute bg-white z-10 h-full w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
+        <div className="absolute bg-white z-10 h-full w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-1 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
             <div className='my-3'>
                 <div className='font-semibold my-1 text-xl'>Nearby Stations</div>
                 <div className='flex-1 border-t-2 border-custom-green'></div>

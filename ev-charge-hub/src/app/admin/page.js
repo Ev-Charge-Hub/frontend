@@ -147,6 +147,7 @@ export default function Page() {
       const data = await apiClient.get(`/stations/${id}`);
 
       setStation({
+        id: data.id,
         name: data.name,
         company: data.company,
         latitude: data.latitude.toString(),
@@ -255,6 +256,13 @@ export default function Page() {
     }
   };
 
+  const [selectedStation, setSelectedStation] = useState(null);
+
+  const [isGoogleMapLoaded, setIsGoogleMapLoaded] = useState(false);
+  const handleGoogleMapLoad = (state) => {
+    setIsGoogleMapLoaded(state);
+  }
+
   return (
     <div className="flex h-screen w-full relative" ref={mapContainerRef}>
       {/* Debug information overlay */}
@@ -276,10 +284,11 @@ export default function Page() {
 
       {/* Map with explicit styling */}
       <div className="absolute inset-0 z-0" style={{ display: mapVisible ? 'block' : 'none' }}>
-        <GoogleMap
+        {/* <GoogleMap
           onStationSelect={handleStationSelect}
           key={`map-${mapKey}`}
-        />
+        /> */}
+        <GoogleMap onStationSelect={handleStationSelect} stationData={stations} handleGoogleMapLoad={handleGoogleMapLoad} center={station ? { lat: Number(station.latitude), lng: Number(station.longitude) } : null} />
       </div>
 
       {error && (
