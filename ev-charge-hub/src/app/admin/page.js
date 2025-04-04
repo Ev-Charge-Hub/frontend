@@ -360,7 +360,7 @@ export default function Page() {
       )}
 
       {/* Form container - moved higher up near the navbar */}
-      {<div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
+      {<div className="absolute bottom-0 bg-white z-10 h-[25rem] w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg sm:top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
         <div className="p-3">
           <h2 className="text-lg font-bold mb-1 text-[#00AB82]">
             {isEditing ? 'Edit EV Charge Station' : 'Add EV Charge Station'}

@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import { logoutUser } from '@/services/authService';
 import { useState } from 'react';
 import { stationService } from '@/services/stationService';
-import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
 function Header({ onFilterButtonClick, activeFilter, onBookingButtonClick, activeBooking, isAuthenticated, setStationData }) {
