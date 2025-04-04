@@ -80,7 +80,7 @@ function BookingModal({ isOpen, onClose, station, connector, username, handleIsB
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
             onClick={handleBackgroundClick}
         >
-            <div className="bg-white p-6 rounded-lg shadow-lg w-4/12 relative z-20">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-4/12 relative z-20 drop-shadow-lg">
                 <div className='mb-4'>
                     <div className='text-xl font-semibold mb-1'>Confirm Your Booking</div>
                     <div className='flex-1 border-t-2 border-custom-green'></div>

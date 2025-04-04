@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import GoogleMap from '@/components/GoogleMap';
 import { apiClient } from '@/utils/apiClient';
+import AdminHeader from '@/components/AdminHeader';
+import { useAuth } from '@/utils/authContext';
 
 export default function Page() {
   const router = useRouter();
@@ -147,6 +149,7 @@ export default function Page() {
       const data = await apiClient.get(`/stations/${id}`);
 
       setStation({
+        id: data.id,
         name: data.name,
         company: data.company,
         latitude: data.latitude.toString(),
@@ -255,8 +258,43 @@ export default function Page() {
     }
   };
 
+  const [selectedStation, setSelectedStation] = useState(null);
+
+  const [isGoogleMapLoaded, setIsGoogleMapLoaded] = useState(false);
+  const handleGoogleMapLoad = (state) => {
+    setIsGoogleMapLoaded(state);
+  }
+
+  const [activeAddStationButton, setActiveFilterButton] = useState(false);
+  const [activeEditStationButton, setActiveBookingButton] = useState(false);
+  const { isAuthenticated, username, login, logout } = useAuth();
+  const handleSetStationData = (data) => {
+    console.log("Setting stations data:", data); // Log the data before setting it
+    setStations(data);
+  };
+
+  const handleAddStationButtonClick = (state) => {
+    setActiveFilterButton(state);
+    setStation(null);
+    setActiveBookingButton(false);
+  };
+
+  const handleEditStationButtonClick = (state) => {
+    setActiveBookingButton(state);
+    setActiveFilterButton(false);
+    setStation(null);
+  };
+  // setIsEditing(false);
+  // setEditingStationId(null);
   return (
     <div className="flex h-screen w-full relative" ref={mapContainerRef}>
+      <AdminHeader
+        onAddStationButtonClick={handleAddStationButtonClick}
+        activeAddStation={activeAddStationButton}
+        onEditStationButtonClick={handleEditStationButtonClick}
+        activeEditStation={activeEditStationButton}
+        isAuthenticated={isAuthenticated}
+        setStationData={handleSetStationData} />
       {/* Debug information overlay */}
       <div className="absolute top-24 left-4 z-20 bg-white p-3 rounded shadow text-xs max-w-xs">
         <h3 className="font-bold">Map Debug Info:</h3>
@@ -276,10 +314,7 @@ export default function Page() {
 
       {/* Map with explicit styling */}
       <div className="absolute inset-0 z-0" style={{ display: mapVisible ? 'block' : 'none' }}>
-        <GoogleMap
-          onStationSelect={handleStationSelect}
-          key={`map-${mapKey}`}
-        />
+        <GoogleMap onStationSelect={handleStationSelect} stationData={stations} handleGoogleMapLoad={handleGoogleMapLoad} center={station ? { lat: Number(station?.latitude), lng: Number(station?.longitude) } : null} />
       </div>
 
       {error && (
@@ -289,12 +324,12 @@ export default function Page() {
       )}
 
       {/* Form container - moved higher up near the navbar */}
-      <div className="absolute right-4 top-12 w-96 max-h-[85vh] overflow-y-auto bg-white rounded-lg shadow-lg z-10">
+      <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
         <div className="p-3">
           <h2 className="text-lg font-bold mb-1 text-[#00AB82]">
             {isEditing ? 'Edit EV Charge Station' : 'Add EV Charge Station'}
           </h2>
-          <div className="border-t-2 border-[#00AB82] mb-2"></div>
+          {/* <div className="border-t-2 border-[#00AB82] mb-2"></div> */}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-2">
@@ -306,7 +341,7 @@ export default function Page() {
                 <input
                   type="text"
                   name="name"
-                  value={station.name}
+                  value={station?.name}
                   onChange={handleStationChange}
                   className="bg-gray-100 w-full px-3 py-2 rounded-lg text-sm"
                   placeholder="Enter station name"
@@ -319,7 +354,7 @@ export default function Page() {
                 <input
                   type="text"
                   name="company"
-                  value={station.company}
+                  value={station?.company}
                   onChange={handleStationChange}
                   className="bg-gray-100 w-full px-3 py-2 rounded-lg text-sm"
                   placeholder="Enter company name"
@@ -332,7 +367,7 @@ export default function Page() {
                   <input
                     type="text"
                     name="latitude"
-                    value={station.latitude}
+                    value={station?.latitude}
                     onChange={handleStationChange}
                     className="bg-gray-100 px-3 py-2 rounded-lg text-sm"
                     placeholder="Latitude"
@@ -341,7 +376,7 @@ export default function Page() {
                   <input
                     type="text"
                     name="longitude"
-                    value={station.longitude}
+                    value={station?.longitude}
                     onChange={handleStationChange}
                     className="bg-gray-100 px-3 py-2 rounded-lg text-sm"
                     placeholder="Longitude"
@@ -355,7 +390,7 @@ export default function Page() {
                   <label className="block text-gray-700 text-sm mb-1">Charger Type</label>
                   <select
                     name="chargerType"
-                    value={station.chargerType}
+                    value={station?.chargerType}
                     onChange={handleStationChange}
                     className="bg-gray-100 w-full h-9 px-3 rounded-lg text-sm appearance-none"
                   >
@@ -369,7 +404,7 @@ export default function Page() {
                   <input
                     type="number"
                     name="numStalls"
-                    value={station.numStalls}
+                    value={station?.numStalls}
                     onChange={handleStationChange}
                     min="1"
                     max="20"
@@ -385,7 +420,7 @@ export default function Page() {
                   <input
                     type="time"
                     name="status.open_hours"
-                    value={station.status.open_hours}
+                    value={station?.status.open_hours}
                     onChange={handleStationChange}
                     className="bg-gray-100 col-span-2 px-3 py-2 rounded-lg text-sm"
                   />
@@ -393,7 +428,7 @@ export default function Page() {
                   <input
                     type="time"
                     name="status.close_hours"
-                    value={station.status.close_hours}
+                    value={station?.status.close_hours}
                     onChange={handleStationChange}
                     className="bg-gray-100 col-span-2 px-3 py-2 rounded-lg text-sm"
                   />
@@ -483,32 +518,32 @@ export default function Page() {
             </div>
             <div className="flex justify-end space-x-2 mb-2">
               <button
-                  type="button"
-                  onClick={() => {
-                    setStation({
-                      name: '',
-                      company: '',
-                      latitude: '',
-                      longitude: '',
-                      status: {
-                        open_hours: '08:00',
-                        close_hours: '20:00',
-                        is_open: true
-                      },
-                      chargerType: 'AC and DC',
-                      numStalls: 1,
-                      connectors: []
-                    });
-                    setConnectors([{
-                      type: 'AC',
-                      power_output: '',
-                      price_per_unit: '',
-                      is_available: true
-                    }]);
-                    setIsEditing(false);
-                    setEditingStationId(null);
-                  }}
-                  className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+                type="button"
+                onClick={() => {
+                  setStation({
+                    name: '',
+                    company: '',
+                    latitude: '',
+                    longitude: '',
+                    status: {
+                      open_hours: '08:00',
+                      close_hours: '20:00',
+                      is_open: true
+                    },
+                    chargerType: 'AC and DC',
+                    numStalls: 1,
+                    connectors: []
+                  });
+                  setConnectors([{
+                    type: 'AC',
+                    power_output: '',
+                    price_per_unit: '',
+                    is_available: true
+                  }]);
+                  setIsEditing(false);
+                  setEditingStationId(null);
+                }}
+                className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
               >
                 Cancel
               </button>
@@ -521,7 +556,7 @@ export default function Page() {
 
                     try {
                       await apiClient.delete(`/stations/${editingStationId}`);
-                      setStations(stations.filter(station => station.id !== editingStationId));
+                      setStations(stations.filter(station => station?.id !== editingStationId));
                       setStation({
                         name: '',
                         company: '',
@@ -558,13 +593,13 @@ export default function Page() {
                 </button>
               )}
               <button
-                  type="submit"
-                  disabled={loading}
-                  className={`px-4 py-1.5 text-sm rounded-lg ${loading ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
+                type="submit"
+                disabled={loading}
+                className={`px-4 py-1.5 text-sm rounded-lg ${loading ? 'bg-gray-400' : 'bg-[#00AB82]'} text-white`}
               >
                 {loading
-                    ? isEditing ? 'Saving...' : 'Adding...'
-                    : isEditing ? 'Save' : 'Add'}
+                  ? isEditing ? 'Saving...' : 'Adding...'
+                  : isEditing ? 'Save' : 'Add'}
               </button>
             </div>
           </form>

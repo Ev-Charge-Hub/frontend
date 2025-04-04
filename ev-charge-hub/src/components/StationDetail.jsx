@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { stationService } from '@/services/stationService';
 import { useLocation } from '@/utils/UserLocationProvider';
 
-function StationDetail({ stationID, handleStationData, closeStationDetail, handleBookingModalOpen, handleSelectedConnector, username, isBook }) {
+function StationDetail({ stationID, handleStationData, closeStationDetail, handleBookingModalOpen, handleSelectedConnector, username, isBook, handleBookingModalClose }) {
     const [station, setStation] = useState(null);
     const { distance, calculateDistance } = useDistance();
     const [isOpen24Hrs, setIsOpen24Hrs] = useState(false);
@@ -26,7 +26,7 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
                 if (!isNaN(lat) && !isNaN(lng)) {
                     console.log(userLocation, lat, lng);
 
-                    calculateDistance(userLocation, { lat, lng });
+                    await calculateDistance(userLocation, { lat, lng });
                 } else {
                     console.error("Invalid latitude or longitude:", data.status);
                 }
@@ -127,27 +127,48 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
         }
     }, [haversineDistance]);
 
+    // Function to open Google Maps with the station location
+    const openInGoogleMaps = () => {
+        if (station && station.latitude && station.longitude) {
+            // Format: https://www.google.com/maps/search/?api=1&query=latitude,longitude
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${station.latitude},${station.longitude}`;
+
+            // Open in a new tab
+            window.open(googleMapsUrl, '_blank');
+        }
+    };
+
     return (
-        <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-2 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
-            <div className='flex justify-center py-2 pt-5 relative'>
-                <button className='absolute top-2 right-1' onClick={closeStationDetail}>
+        <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
+            <div className='flex justify-center py-2 relative'>
+                <button className='absolute top-2 right-1' onClick={() => { closeStationDetail(), handleBookingModalClose() }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                 </button>
                 <div className='mx-3 align-middle'>
                     <svg xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 -960 960 960" width="38px" fill="#07775c"><path d="m340-200 100-160h-60v-120L280-320h60v120ZM240-560h240v-200H240v200Zm0 360h240v-280H240v280Zm-80 80v-640q0-33 23.5-56.5T240-840h240q33 0 56.5 23.5T560-760v280h50q29 0 49.5 20.5T680-410v185q0 17 14 31t31 14q18 0 31.5-14t13.5-31v-375h-10q-17 0-28.5-11.5T720-640v-80h20v-60h40v60h40v-60h40v60h20v80q0 17-11.5 28.5T840-600h-10v375q0 42-30.5 73.5T725-120q-43 0-74-31.5T620-225v-185q0-5-2.5-7.5T610-420h-50v300H160Zm320-80H240h240Z" /></svg>
                 </div>
                 <div className='w-3/4 mx-1'>
-                    <div className='font-bold'>{station?.name}<br/> ({station?.company})</div>
+                    <div className='font-bold'>{station?.name}<br /> ({station?.company})</div>
                     <div className='flex justify-between'>
-                            <div className={`${station?.status.is_open ? 'text-custom-green' : 'text-custom-red'}`}>
-                                {station?.status.is_open ? 'Open' : 'Closed'}
-                                {isOpen24Hrs ? ' 24 hours' : ` ${station?.status.open_hours} - ${station?.status.close_hours}`}
-                            </div>
-                            <div className='text-gray-400'>{` ${distance} away `}</div>
+                        <div className={`${station?.status.is_open ? 'text-custom-green' : 'text-custom-red'}`}>
+                            {station?.status.is_open ? 'Open' : 'Closed'}
+                            {isOpen24Hrs ? ' 24 hours' : ` ${station?.status.open_hours} - ${station?.status.close_hours}`}
+                        </div>
+                        <div className='text-gray-400'>{` ${distance} away `}</div>
                     </div>
                 </div>
             </div>
-            <div className='my-3'>
+            {/* View in Maps Button */}
+            <button
+                onClick={openInGoogleMaps}
+                className="w-full my-2 py-2 mb-2 bg-custom-green text-white rounded-lg flex items-center justify-center transition-colors hover:bg-custom-green-dark"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+                Navigate to Station
+            </button>
+            <div className='mb-2'>
                 <div className='flex flex-row justify-between'>
                     <div className='font-semibold my-1'>Connector Type</div>
                     <div className='text-custom-green mt-1'>{availableConnectors} of {station?.connectors?.length} stalls available</div>

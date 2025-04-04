@@ -1,9 +1,22 @@
-import React from 'react'
+"use client";
+
+import React from "react";
+import HomeNavbar from "@/components/HomeNavBar";
+import HeroSection from "@/components/HeroSection";
+import MapSection from "@/components/MapSection";
+import Footer from "@/components/Footer";
 
 function Home() {
   return (
-    <div>Home</div>
-  )
+    <div className="min-h-screen">
+      <HomeNavbar />
+      <main>
+        <HeroSection />
+        <MapSection />
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
-export default Home
+export default Home;
