@@ -7,7 +7,7 @@ function NearByStations({ stationData, handleStationSelect, showStationDetail })
 
     const haversine = useCallback((lat1, lon1, lat2, lon2) => {
         if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-            console.log('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
+            console.error('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
             return Infinity;
         }
 
@@ -45,12 +45,11 @@ function NearByStations({ stationData, handleStationSelect, showStationDetail })
 
 
     return (
-        <div className="absolute bg-white z-10 h-full w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-1 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
-            <div className='my-3'>
+<div className="absolute bg-white z-10 h-[25rem] w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-1 rounded-lg bottom-0 sm:top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">            <div className='my-3'>
                 <div className='font-semibold my-1 text-xl'>Nearby Stations</div>
                 <div className='flex-1 border-t-2 border-custom-green'></div>
             </div>
-            <div className='overflow-scroll max-h-[28rem]'>
+            <div className='overflow-scroll sm:max-h-[28rem] max-h-[30rem]'>
                 {nearbyStations.length > 0 ? (
                     nearbyStations.map((station, index) => (
                         <div key={index} className="flex items-center my-4">
