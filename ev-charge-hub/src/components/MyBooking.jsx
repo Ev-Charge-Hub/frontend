@@ -17,7 +17,7 @@ function MyBooking({ username, closeBooking, handleStationSelect, showStationDet
                 const response = await stationService.getBookingByUsername(username);
                 setBookingData(response);
             } catch (error) {
-                console.error("Error fetching booking:", error);
+                console.log("Error fetching booking:", error);
             }
         };
 

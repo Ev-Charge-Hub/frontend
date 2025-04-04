@@ -64,12 +64,20 @@ function Register() {
         formData.password,
         "USER"
       );
-  
-      console.log("Registration successful:", response);
       router.push('/login');
     } catch (error) {
-      console.error("Registration error details:", error);
-      setError(error?.response?.data?.message || error.message || 'Registration failed. Please try again.');
+      if (error.response) {
+        console.log("Error response:", error.response);
+        setError(error.response.data.message || 'Registration failed. Please try again.');
+      }
+      else if (error.request) {
+        console.log("Error request:", error.request);
+        setError('No response received. Please check your network connection.');
+      } else {
+        console.log("Error message:", error.message);
+        setError('An unexpected error occurred. Please try again.');
+      }
+      setError(response || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

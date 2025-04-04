@@ -37,7 +37,7 @@ function GoogleMap({ onStationSelect, stationData, handleGoogleMapLoad, center }
             const apiKey = process.env.NEXT_PUBLIC_MAPS_API_KEY;
             if (!apiKey) {
                 setError('Google Maps API key is missing');
-                console.error('Google Maps API key is not configured');
+                console.log('Google Maps API key is not configured');
                 return;
             }
 
@@ -86,7 +86,7 @@ function GoogleMap({ onStationSelect, stationData, handleGoogleMapLoad, center }
 
             } catch (error) {
                 const errorMessage = error.message || 'Unknown error occurred';
-                console.error('Detailed error initializing map:', {
+                console.log('Detailed error initializing map:', {
                     message: errorMessage,
                     stack: error.stack,
                     type: error.name
@@ -131,7 +131,7 @@ function GoogleMap({ onStationSelect, stationData, handleGoogleMapLoad, center }
                     marker.setMap(null);
                 };
             } catch (error) {
-                console.error('Error adding marker:', error);
+                console.log('Error adding marker:', error);
                 setError('Failed to add location marker to map');
             }
         }
@@ -152,7 +152,7 @@ function GoogleMap({ onStationSelect, stationData, handleGoogleMapLoad, center }
                 let markerColor = "#717171"; // Default grey for closed
                 let svgContent = "";
 
-                if (station.status.is_open) {
+                if (station?.status?.is_open) {
                     if (hasAvailableConnector) {
                         // Station is open and has available connectors - use green marker with lightning
                         markerColor = "#00AB82";

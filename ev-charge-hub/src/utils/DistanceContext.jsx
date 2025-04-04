@@ -40,14 +40,14 @@ export const DistanceProvider = ({ children }) => {
             const distanceText = response.rows[0].elements[0].distance?.text;
             setDistance(distanceText);
           } else {
-            console.error("Error with distance matrix service:", status);
+            console.log("Error with distance matrix service:", status);
           }
         });
       } catch (error) {
-        console.error("Error calling google.maps.DistanceMatrixService:", error);
+        console.log("Error calling google.maps.DistanceMatrixService:", error);
       }
     } else {
-      console.error("Google Maps API not available");
+      console.log("Google Maps API not available");
     }
   }, [googleLoaded]); // Remove 'origin' from the dependency array
 

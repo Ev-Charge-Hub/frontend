@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
         setUsername(decodedToken.username || decodedToken.sub || null); // Adjust based on token structure
         setIsAuthenticated(true);
       } catch (error) {
-        console.error("Invalid token", error);
+        console.log("Invalid token", error);
         removeToken();
         setIsAuthenticated(false);
         setUsername(null);
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
       setToken(token);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error("Invalid token", error);
+      console.log("Invalid token", error);
     }
   };
 

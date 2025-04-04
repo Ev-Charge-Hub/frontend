@@ -10,7 +10,7 @@ export const registerUser = async (username, email, password, role = "USER") => 
       role,
     });
   } catch (error) {
-    console.error("Error registering user:", error);
+    console.log("Error registering user:", error);
     throw error;
   }
 };
@@ -30,7 +30,7 @@ export const loginUser = async (username_or_email, password) => {
 
     return null
   } catch (error) {
-    console.error("Error logging in:", error);
+    console.log("Error logging in:", error);
     throw error;
   }
 };

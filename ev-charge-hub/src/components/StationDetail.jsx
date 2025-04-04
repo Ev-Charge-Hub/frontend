@@ -28,10 +28,10 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
 
                     await calculateDistance(userLocation, { lat, lng });
                 } else {
-                    console.error("Invalid latitude or longitude:", data.status);
+                    console.log("Invalid latitude or longitude:", data.status);
                 }
             } else {
-                console.error("Latitude or longitude is missing:", data);
+                console.log("Latitude or longitude is missing:", data);
             }
             setStation(data);
             handleStationData(data);
@@ -80,7 +80,7 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
 
     function haversine(lat1, lon1, lat2, lon2) {
         if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-            console.error('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
+            console.log('Invalid coordinates passed to haversine:', lat1, lon1, lat2, lon2);
             return 0; // Default to 0 if any of the coordinates are invalid
         }
 
@@ -111,7 +111,7 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
 
             // Check if any coordinates are invalid or missing
             if (!lat1 || !lon1 || !lat2 || !lon2 || isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-                console.error('Invalid coordinates:', lat1, lon1, lat2, lon2);
+                console.log('Invalid coordinates:', lat1, lon1, lat2, lon2);
                 setHaversineDistance(null); // Set to null or some default value
             } else {
                 const distance = haversine(lat1, lon1, lat2, lon2);
@@ -139,7 +139,8 @@ function StationDetail({ stationID, handleStationData, closeStationDetail, handl
     };
 
     return (
-        <div className="absolute bg-white z-10 h-full w-full px-2 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
+        // <div className="absolute bg-white z-10 h-[25rem] w-full px-4 sm:w-4/12 sm:h-[35rem] sm:px-4 sm:py-2 sm:mt-1 rounded-lg bottom-0 sm:top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0">
+        <div className="absolute bg-white z-10 h-[25rem] w-full px-4 sm:h-[35rem] sm:w-4/12 sm:px-4 sm:py-3 sm:mt-2 sm:mr-2 rounded-lg bottom-0 sm:top-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 overflow-scroll max-h-72 sm:max-h-[35rem]">
             <div className='flex justify-center py-2 relative'>
                 <button className='absolute top-2 right-1' onClick={() => { closeStationDetail(), handleBookingModalClose() }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>

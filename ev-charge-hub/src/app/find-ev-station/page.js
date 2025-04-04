@@ -40,7 +40,7 @@ function findEvStation() {
     if (data) {
       setSelectedStation(data);
     } else {
-      console.error("Selected station not found in the stations array");
+      console.log("Selected station not found in the stations array");
     }
     console.log(selectedStation)
   };
@@ -49,7 +49,7 @@ function findEvStation() {
     if (data) {
       setSelectedConnector(data);
     } else {
-      console.error("Selected connector not found in the stations array");
+      console.log("Selected connector not found in the stations array");
     }
     console.log(selectedConnector)
   };
@@ -102,11 +102,11 @@ function findEvStation() {
         setStations(data);
       } else {
         setError('Fetched data is not an array');
-        console.error('Fetched data is not an array:', data);
+        console.log('Fetched data is not an array:', data);
       }
     } catch (error) {
       setError('Failed to fetch stations');
-      console.error("Error fetching stations:", error);
+      console.log("Error fetching stations:", error);
     }
   };
 
@@ -146,6 +146,7 @@ function findEvStation() {
         activeBooking={activeBookingButton}
         isAuthenticated={isAuthenticated}
         setStationData={handleSetStationData}
+        setSelectedStation={setSelectedStation}
       />
       {stations?.length !== 0 && <GoogleMap onStationSelect={handleStationSelect} stationData={stations} handleGoogleMapLoad={handleGoogleMapLoad} center={selectedStation ? { lat: selectedStation.latitude, lng: selectedStation.longitude } : null} />}
 

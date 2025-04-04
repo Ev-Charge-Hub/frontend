@@ -11,7 +11,7 @@ export const stationService = {
       }
       return await get('/stations'); 
     } catch (error) {
-      console.error('Error fetching stations:', error);
+      console.log('Error fetching stations:', error);
       throw error; 
     }
   },
@@ -23,7 +23,7 @@ export const stationService = {
       }
       return await get(`/stations/${stationId}`); 
     } catch (error) {
-      console.error('Error fetching station by ID:', error);
+      console.log('Error fetching station by ID:', error);
       throw error; 
     }
   },
@@ -42,7 +42,7 @@ export const stationService = {
       const queryString = queryParams.toString();
       return await get(`/stations/filter?${queryString}`); 
     } catch (error) {
-      console.error('Error fetching filtered stations:', error);
+      console.log('Error fetching filtered stations:', error);
       throw error; 
     }
   },
@@ -55,7 +55,7 @@ export const stationService = {
         station: response,
       };
     } catch (error) {
-      console.error('Error adding station:', error);
+      console.log('Error adding station:', error);
       return {
         success: false,
         message: 'Error adding station',
@@ -71,7 +71,7 @@ export const stationService = {
         station: response,
       };
     } catch (error) {
-      console.error('Error updating station:', error);
+      console.log('Error updating station:', error);
       return {
         success: false,
         message: 'Error updating station',
@@ -86,7 +86,7 @@ export const stationService = {
         success: true,
       };
     } catch (error) {
-      console.error('Error deleting station:', error);
+      console.log('Error deleting station:', error);
       return {
         success: false,
         message: 'Error deleting station',
@@ -106,7 +106,7 @@ export const stationService = {
       const response = await put('/stations/set-booking', body); 
       return response;
     } catch (error) {
-      console.error('Error booking station:', error);
+      console.log('Error booking station:', error);
       return null; 
     }
   },
@@ -118,7 +118,7 @@ export const stationService = {
       }
       return await get(`/stations/username/${username}`); 
     } catch (error) {
-      console.error('Error fetching stations:', error);
+      console.log('Error fetching stations:', error);
       throw error; 
     }
   },

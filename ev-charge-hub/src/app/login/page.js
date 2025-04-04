@@ -57,7 +57,7 @@ function Page() {
         router.push('/find-ev-station');
       }
     } catch (error) {
-      console.error("Login error details:", error);
+      console.log("Login error details:", error);
       setError(error.message || "Invalid username or password");
     } finally {
       setIsLoading(false);
