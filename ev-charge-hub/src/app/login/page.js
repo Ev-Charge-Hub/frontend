@@ -42,13 +42,6 @@ function Page() {
       return;
     }
 
-    if (formData.username_or_email === 'admin' && formData.password === 'admin') {
-      console.log("Admin login successful, using mock token");
-      setToken('admin_mock_token');
-      router.push('/admin');
-      return;
-    }
-
     try {
       const data = await loginUser(formData.username_or_email, formData.password);
       if (data) {
