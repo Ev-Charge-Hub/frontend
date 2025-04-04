@@ -11,6 +11,7 @@ export const DistanceProvider = ({ children }) => {
     const checkGoogleMap = setInterval(() => {
       if (typeof google !== "undefined" && google.maps) {
         setGoogleLoaded(true);
+        clearInterval(checkGoogleMap);
       }
     }, 500);
     return () => clearInterval(checkGoogleMap);
@@ -18,7 +19,8 @@ export const DistanceProvider = ({ children }) => {
 
   const calculateDistance = useCallback((origin, destination) => {
     if (!googleLoaded) {
-      console.error("Google Maps API is not fully loaded.");
+      console.warn("Google Maps API is not fully loaded yet. Retrying...");
+      // setTimeout(() => calculateDistance(origin, destination), 500);
       return;
     }
 
@@ -35,7 +37,7 @@ export const DistanceProvider = ({ children }) => {
 
         distanceService.getDistanceMatrix(request, (response, status) => {
           if (status === google.maps.DistanceMatrixStatus.OK) {
-            const distanceText = response.rows[0].elements[0].distance.text;
+            const distanceText = response.rows[0].elements[0].distance?.text;
             setDistance(distanceText);
           } else {
             console.error("Error with distance matrix service:", status);

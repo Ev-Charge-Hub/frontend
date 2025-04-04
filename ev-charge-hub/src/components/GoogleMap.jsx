@@ -5,7 +5,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { useLocation } from '@/utils/UserLocationProvider';
 import { useRouter } from 'next/navigation';
 
-function GoogleMap({ onStationSelect, stationData }) {
+function GoogleMap({ onStationSelect, stationData, handleGoogleMapLoad, center }) {
     const mapRef = useRef(null);
     const location = useLocation();
     const [map, setMap] = useState(null);
@@ -23,6 +23,13 @@ function GoogleMap({ onStationSelect, stationData }) {
         setStations(stationData);
         console.log(stationData)
     }, [stationData]);
+
+    useEffect(() => {
+        if (center) {
+            map?.setCenter(center); 
+            map?.setZoom(15);
+        }
+    }, [center]);
 
     useEffect(() => {
         const initMap = async () => {
@@ -50,6 +57,7 @@ function GoogleMap({ onStationSelect, stationData }) {
                 // Wait for the loader to load
                 await loader.load();
                 console.log('Google Maps script loaded successfully');
+                handleGoogleMapLoad(true);
 
                 // Import the maps library
                 const { Map } = await loader.importLibrary('maps');

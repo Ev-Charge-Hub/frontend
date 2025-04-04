@@ -4,6 +4,7 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
     const [timeRemaining, setTimeRemaining] = useState(null);
     const bookingUsername = connector.booking?.username || null;
     const isUserBooking = bookingUsername === username;
+    const [bookingStatus, setBookingStatus] = useState("");
     console.log("isUserBooking: ", isUserBooking);
 
     // Select the appropriate connector image based on plug_name
@@ -32,6 +33,9 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
                     setTimeRemaining(minutes);
                 } else {
                     setTimeRemaining(0); // Booking expired, mark as available
+                    if (isUserBooking) {
+                        setBookingStatus("Expired"); // Show expired if it's the user's booking
+                    }
                 }
             };
 
@@ -49,7 +53,7 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
     }, [isUserBooking]);
 
     // Determine if the connector is available
-    const isAvailable = !connector.booking || timeRemaining === 0;
+    const isAvailable = !connector.booking || timeRemaining <= 0;
 
     const handleSelectedConnectorClick = () => {
         handleSelectedConnector(connector);
@@ -68,8 +72,17 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
             </div>
             <div className="content-center">
                 {isUserBooking ? (
-                    <div className="text-custom-green ml-2">
-                        Booked
+                    <div className={`${bookingStatus ? 'text-gray-500' : 'text-custom-green'} ml-2`}>
+                        {bookingStatus || "Booked"}
+                        {bookingStatus && (
+                            <button
+                                className={`px-4 py-2 bg-custom-green text-white ml-2 rounded ${isWithin20Km ? 'hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                                onClick={() => { handleSelectedConnectorClick() }}
+                                disabled={!isWithin20Km}
+                            >
+                                Book Again
+                            </button>
+                        )}
                     </div>
                 ) : isAvailable ? (
                     <div className="text-custom-green flex flex-row justify-center">
@@ -97,6 +110,7 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
                         You cannot book because you're not within 20km of the station.
                     </p>
                 )}
+
             </div>
         </div >
     );

@@ -62,7 +62,7 @@ function Header({ onFilterButtonClick, activeFilter, onBookingButtonClick, activ
         </div>
       </div>
 
-      <div className='flex items-center space-x-4'>
+      <div className='hidden md:flex md:items-center md:space-x-4'>
         {/* Filter Button */}
         <button
           title='Filter'

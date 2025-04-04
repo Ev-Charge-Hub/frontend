@@ -109,5 +109,17 @@ export const stationService = {
       console.error('Error booking station:', error);
       return null; 
     }
-  }
+  },
+
+  async getBookingByUsername(username) {
+    try {
+      if (!API_BASE_URL) {
+        throw new Error('API_BASE_URL is not set');
+      }
+      return await get(`/stations/username/${username}`); 
+    } catch (error) {
+      console.error('Error fetching stations:', error);
+      throw error; 
+    }
+  },
 };

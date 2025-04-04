@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import Filter from "@/components/Filter";
 import { stationService } from "@/services/stationService";
 import BookingModal from "@/components/BookingModal";
-import NearByStation from "@/components/NearByStation";
+import NearByStations from "@/components/NearByStation";
 import { useAuth } from "@/utils/authContext";
 import MyBooking from "@/components/MyBooking";
 
@@ -27,9 +27,13 @@ function findEvStation() {
   };
 
   const handleStationSelect = (id) => {
-    setStationID(id);
-    setActiveFilterButton(false);
-    setActiveBookingButton(false);
+    const station = stations.find(station => station.id === id);
+    if (station) {
+      setSelectedStation(station);  // Update the selected station
+      setStationID(id);  // Set the station ID for the detail modal
+      setActiveFilterButton(false);
+      setActiveBookingButton(false);
+    }
   };
 
   const handleStationData = (data) => {
@@ -119,9 +123,19 @@ function findEvStation() {
   const handleBookingModalOpen = () => {
     setModalOpen(true);
   }
+
   const handleBookingModalClose = () => {
     setModalOpen(false);
   }
+
+  const [isGoogleMapLoaded, setIsGoogleMapLoaded] = useState(false);
+  const handleGoogleMapLoad = (state) => {
+    setIsGoogleMapLoaded(state);
+  }
+
+  const showStationDetail = (station) => {
+    setSelectedStation(station);
+  };
 
   return (
     <div>
@@ -133,7 +147,7 @@ function findEvStation() {
         isAuthenticated={isAuthenticated}
         setStationData={handleSetStationData}
       />
-      {stations?.length !== 0 && <GoogleMap onStationSelect={handleStationSelect} stationData={stations} />}
+      {stations?.length !== 0 && <GoogleMap onStationSelect={handleStationSelect} stationData={stations} handleGoogleMapLoad={handleGoogleMapLoad} center={selectedStation ? { lat: selectedStation.latitude, lng: selectedStation.longitude } : null} />}
 
       {stationID !== null && (
         <StationDetail
@@ -153,7 +167,7 @@ function findEvStation() {
       )}
 
       {activeBookingButton && (
-        <MyBooking username={username} closeBooking={handleCloseBooking}/>
+        <MyBooking username={username} closeBooking={() => { handleCloseBooking() }} showStationDetail={showStationDetail} handleStationSelect={handleStationSelect} />
       )}
 
       <BookingModal
@@ -162,8 +176,9 @@ function findEvStation() {
         station={selectedStation}
         connector={selectedConnector}
         username={username}
-        handleIsBook={handleIsBook} />
-      {activeFilterButton === false && activeBookingButton === false && stationID === null && stations?.length !== 0 && <NearByStation stationData={stations} />}
+        handleIsBook={handleIsBook}
+        handleStationSelect={handleStationSelect} />
+      {activeFilterButton === false && activeBookingButton === false && stationID === null && stations?.length !== 0 && <NearByStations stationData={stations} isGoogleMapLoaded={isGoogleMapLoaded} showStationDetail={showStationDetail} handleStationSelect={handleStationSelect} />}
     </div>
   );
 }
