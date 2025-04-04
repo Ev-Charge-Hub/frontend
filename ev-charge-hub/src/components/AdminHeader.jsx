@@ -5,18 +5,18 @@ import { useState } from 'react';
 import { stationService } from '@/services/stationService';
 import { SquarePlus } from 'lucide-react';
 
-function AdminHeader({ onFilterButtonClick, activeFilter, onBookingButtonClick, activeBooking, isAuthenticated, setStationData }) {
+function AdminHeader({ onAddStationButtonClick, activeAddStation, onEditStationButtonClick, activeEditStation, isAuthenticated, setStationData }) {
 
   const router = useRouter();
 
-  const handleFilterButtonClick = (state) => {
-    onBookingButtonClick(false);
-    onFilterButtonClick(true);
+  const handleAddStationButtonClick = (state) => {
+    onEditStationButtonClick(false);
+    onAddStationButtonClick(true);
   };
 
-  const handleBookingButtonClick = (state) => {
-    onFilterButtonClick(false);
-    onBookingButtonClick(true);
+  const handleEditStationButtonClick = (state) => {
+    onAddStationButtonClick(false);
+    onEditStationButtonClick(true);
   };
 
   const handleAuthButtonClick = () => {
@@ -64,23 +64,20 @@ function AdminHeader({ onFilterButtonClick, activeFilter, onBookingButtonClick, 
       </div>
 
       <div className='hidden md:flex md:items-center md:space-x-4'>
-        {/* Filter Button */}
         <button
           title='Filter'
-          className={`rounded-md p-2 flex items-center space-x-2 ${activeFilter ? 'bg-[#00AB82] text-white' : 'bg-white hover:bg-gray-100'}`}
-          onClick={handleFilterButtonClick}
+          className={`rounded-md p-2 flex items-center space-x-2 ${activeAddStation ? 'bg-[#00AB82] text-white' : 'bg-white hover:bg-gray-100'}`}
+          onClick={handleAddStationButtonClick}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00AB82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-plus-icon lucide-square-plus"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={activeAddStation ? '#FFFFFF' : '#00AB82'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-plus-icon lucide-square-plus"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
           <span>Add Station</span>
         </button>
-
-        {/* Booking Button */}
         <button
           title='My Booking'
-          className={`rounded-md p-2 flex items-center space-x-2 ${activeBooking ? 'bg-[#00AB82] text-white' : 'bg-white hover:bg-gray-100'}`}
-          onClick={handleBookingButtonClick}
+          className={`rounded-md p-2 flex items-center space-x-2 ${activeEditStation ? 'bg-[#00AB82] text-white' : 'bg-white hover:bg-gray-100'}`}
+          onClick={handleEditStationButtonClick}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00AB82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={activeEditStation ? '#FFFFFF' : '#00AB82'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
           <span>Edit Station</span>
         </button>
 
