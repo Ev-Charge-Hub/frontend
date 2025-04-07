@@ -24,8 +24,9 @@ function ConnectorDetail({ connector, handleSelectedConnector, handleBookingModa
         if (connector.booking?.booking_end_time) {
             const updateRemainingTime = () => {
                 const endTime = new Date(connector.booking.booking_end_time);
-                const currentTime = new Date();
-                const diffMs = endTime - currentTime;
+                const currentTimeInIndonesia = new Date();
+                const currentTimeInUTC = new Date(currentTimeInIndonesia.getTime() - 7 * 60 * 60 * 1000);
+                const diffMs = endTime - currentTimeInUTC;
 
                 if (diffMs > 0) {
                     // Convert milliseconds to minutes and round up

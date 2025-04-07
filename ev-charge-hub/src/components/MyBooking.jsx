@@ -35,17 +35,18 @@ function MyBooking({ username, closeBooking, handleStationSelect, showStationDet
 
         // Check if booking has expired or is still valid
         if (bookingData?.connectors?.[0]?.booking?.booking_end_time) {
-            const currentTime = new Date();
+            const currentTimeInIndonesia = new Date();
+            const currentTimeInUTC = new Date(currentTimeInIndonesia.getTime() - 7 * 60 * 60 * 1000);
             const bookingEndTime = new Date(bookingData.connectors[0].booking.booking_end_time);
 
-            if (currentTime > bookingEndTime) {
+            if (currentTimeInUTC > bookingEndTime) {
                 setStatusMessage("Expired");
             } else {
-                const timeRemaining = bookingEndTime - currentTime;
+                const timeRemaining = bookingEndTime - currentTimeInUTC;
                 const hoursRemaining = Math.floor(timeRemaining / 1000 / 60 / 60);
                 const minutesRemaining = Math.floor((timeRemaining / 1000 / 60) % 60);
 
-                setStatusMessage(`เวลาที่จะครบเวลา: ${hoursRemaining} ชั่วโมง ${minutesRemaining} นาที`);
+                setStatusMessage(`Time remaining: ${hoursRemaining} hours ${minutesRemaining} minutes`);
             }
         }
     }, [bookingData]);
@@ -97,11 +98,11 @@ function MyBooking({ username, closeBooking, handleStationSelect, showStationDet
                                         {bookingData?.status?.is_open ? 'Open' : 'Closed'}
                                         {isOpen24Hrs ? ' 24 hours' : ` ${bookingData?.status?.open_hours} - ${bookingData?.status?.close_hours}`}
                                     </div>
-                                    <button 
-                                        className='text-custom-green hover:text-custom-green' 
+                                    <button
+                                        className='text-custom-green hover:text-custom-green'
                                         onClick={() => {
-                                            handleStationSelect(bookingData?.id); 
-                                            showStationDetail(bookingData); 
+                                            handleStationSelect(bookingData?.id);
+                                            showStationDetail(bookingData);
                                             closeBooking();
                                         }}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right-icon lucide-arrow-right">
